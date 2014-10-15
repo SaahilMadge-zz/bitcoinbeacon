@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="/static/js/bitcoinbeacon_create.js"></script>
+
+	<title>
+		Create a new lottery
+	</title>
+</head>
+
+<body>
+	<!-- Little description of the Bitcoin Beacon website -->
+	<div id = "welcome">
+		<p>
+			Create a new lottery!
+		</p>
+	</div>
+	<form id ="createLotteryForm">
+		Number of participants: <input type="text" name="numParticipants" id="numParticipants"><br>
+		Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
+		Time to make results available: <input type="text" name="resultsTime" id="resultsTime"><br>
+		<input type="submit" value="Create my manifest!" id="newLotterySubmission">
+	</form>
+	<div id = "testSubmitButton"></div>
+
+</body>
+
+</html>

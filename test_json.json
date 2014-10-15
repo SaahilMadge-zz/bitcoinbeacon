@@ -1,0 +1,8 @@
+{ 
+    "futureBlockNum":250000, 
+    "lotteryDetails": 
+    {
+        "numParticipants":30,
+        "numWinners":2
+    }
+}
