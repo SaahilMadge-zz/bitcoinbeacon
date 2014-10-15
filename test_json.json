@@ -1,8 +1,9 @@
 { 
-    "futureBlockNum":250000, 
+    "futureBlockNum":154595, 
     "lotteryDetails": 
     {
         "numParticipants":30,
         "numWinners":2
-    }
+    },
+    "randomKey":128
 }
