@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="/static/js/bitcoinbeacon_create.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="/static/js/bitcoinbeacon_create.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/css/bitcoinbeacon_create.css"/>
 
 	<title>
 		Create a new lottery
@@ -19,12 +19,13 @@
 	</div>
 	<form id ="createLotteryForm">
 		Number of participants: <input type="text" name="numParticipants" id="numParticipants"><br>
+		Number of winners: <input type="text" name="numWinners" id="numWinners"><br>
 		Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
 		Time to make results available: <input type="text" name="resultsTime" id="resultsTime"><br>
-		<input type="submit" value="Create my manifest!" id="newLotterySubmission">
+		<!-- <input type="submit" value="Create my manifest!" id="newLotterySubmission"> -->
 	</form>
-	<div id = "testSubmitButton"></div>
-
+	<div id="testSubmitButton"></div>
+	<div id="manifestWindow"></div>
 </body>
 
 </html>

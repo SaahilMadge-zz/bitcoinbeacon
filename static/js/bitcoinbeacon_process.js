@@ -63,7 +63,7 @@ function readFile()
 		// $.ajax(
 		// {
 		// 	type: "GET",
-		// 	dataType: "json",
+		// 	dataType: "jsonp",
 		// 	url: urlReplacedCORS,
 		// 	crossDomain:true,
 		// 	contentType: 'text/plain'

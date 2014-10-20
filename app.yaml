@@ -8,6 +8,9 @@ handlers:
 - url: /static/js
   static_dir: static/js
 
+- url: /static/css
+  static_dir: static/css
+
 - url: /.*
   script: bitcoinbeacon.application  
 

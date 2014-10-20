@@ -1,0 +1,21 @@
+html {
+	height: 100%;
+}
+
+body {
+	height: 100%;
+}
+
+#manifestWindow {
+	display: flex;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-left: 10%;
+	margin-right: 10%;
+	height: 60%;
+	width: 80%;
+	border-top: dotted 1px black;
+	border-left: dotted 1px black;
+	border-right: dotted 1px black;
+	border-bottom: dotted 1px black;
+}
