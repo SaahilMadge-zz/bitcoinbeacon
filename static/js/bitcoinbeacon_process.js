@@ -51,8 +51,8 @@ function readFile()
 		console.log(randomKeyBitArray);
 
 		// query blockchain.info for the hash of that block
-		urlReplacedCORS = blockBaseURL.replace("$block_index", blockNumber) + "?cors=true";
-		console.log(urlReplacedCORS);
+		// urlReplacedCORS = blockBaseURL.replace("$block_index", blockNumber) + "?cors=true";
+		// console.log(urlReplacedCORS);
 
 		// $.getJSON(urlReplaced + "?callback=?", null, function(data)
 		// {
@@ -78,11 +78,51 @@ function readFile()
 
 		var blockHash = "000000000000085a032822ec22783149b3af4d590634038c7dfe217f2b3c68bf";
 		var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
-		var hmacOut32 = sjcl.bitArray.clamp(hmacOut, 32);
-		console.log("hmacOut32: " + hmacOut32);
-		console.log("hmacOut32Length: " + sjcl.bitArray.bitLength(hmacOut32));
+		var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
+		console.log("hmacOut32: " + randomBits);
+		console.log("hmacOut32Length: " + sjcl.bitArray.bitLength(randomBits));
+
+		selectLotteryWinners(randomBits, numParticipants, numWinners);
 	}
-	reader.readAsText(file);	
+	reader.readAsText(file);
+}
+
+function selectLotteryWinners(randomBits, numParticipants, numWinners)
+{
+	// code from http://stackoverflow.com/questions/5199901/how-to-sort-an-associative-array-by-its-values-in-javascript
+	var tuples = [];
+	var indexHash = 0;
+	var concatenated = "";
+	for (var i = 0; i < numParticipants; i++) {
+		concatenated = randomBits + "" + i;
+		console.log("concatenated" + i + ": " + concatenated);
+		indexHash = sjcl.hash.sha256.hash(concatenated);
+		console.log("hash" + i + ": " + indexHash);
+		tuples.push([i, indexHash]);
+	}
+	console.log(tuples[0]);
+	tuples.sort(function(a, b) {
+	    a = a[1];
+	    b = b[1];
+
+	    // console.log(a[0]);
+	    // console.log(a[1]);
+
+	    for (var i = 0; i < 16; i++)
+	    {
+	    	if (a[i] < b[i])
+	    		return -1;
+	    	else if (a[i] > b[i])
+	    		return 1;
+	    }
+
+	    // return a < b ? -1 : (a > b ? 1 : 0);
+	});
+	console.log(tuples);
+	var winnersPane = $('#winnersPane');
+	winnersPane.html("<b>Winners:</b> ");
+	for (var i = 0; i < numWinners; i++)
+		winnersPane.append("" + tuples[i][0] + " ");
 }
 
 $(document).ready(function()
