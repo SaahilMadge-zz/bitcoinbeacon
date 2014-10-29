@@ -3,7 +3,7 @@
     "lotteryDetails": 
     {
         "numParticipants":30,
-        "numWinners":2
+        "numWinners":5
     },
     "randomKey":128
 }

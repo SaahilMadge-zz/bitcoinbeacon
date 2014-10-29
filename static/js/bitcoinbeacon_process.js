@@ -1,6 +1,7 @@
 var confirmButton = $('#confirmManifestButton');
 var file = $('#manifestUpload')[0];
-var blockBaseURL = "http://blockchain.info/block-index/$block_index?format=json"
+// var blockBaseURL = "http://blockchain.info/block-index/"
+var blockBaseURL = "https://api.blockcypher.com/v1/btc/main/blocks/";
 
 function printFileInfo(file)
 {
@@ -60,29 +61,34 @@ function readFile()
 		// 	console.log(blockJSONData);
 		// });
 
-		// $.ajax(
-		// {
-		// 	type: "GET",
-		// 	dataType: "jsonp",
-		// 	url: urlReplacedCORS,
-		// 	crossDomain:true,
-		// 	contentType: 'text/plain'
-		// }).done(function(json)
-		// {
-		// 	latestblock = json;
-		// 	console.log(json);
-		// }).fail(function(textStatus, error)
-		// {
-		// 	console.log("Error: " + textStatus + " " + error);
-		// });
+		// console.log("url: " + blockBaseURL + blockNumber + "?format=json");
+		console.log("url: " + blockBaseURL + blockNumber);
 
-		var blockHash = "000000000000085a032822ec22783149b3af4d590634038c7dfe217f2b3c68bf";
-		var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
-		var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
-		console.log("hmacOut32: " + randomBits);
-		console.log("hmacOut32Length: " + sjcl.bitArray.bitLength(randomBits));
+		$.ajax(
+		{
+			type: "GET",
+			dataType: "json",
+			// url: blockBaseURL + blockNumber + "?format=json",
+			url: blockBaseURL + blockNumber,
+			crossDomain:true,
+			contentType: 'text/plain'
+		}).done(function(json)
+		{
+			latestblock = json;
+			// console.log(json);
+			var blockHash = json.hash;
+			console.log("blockHash: " + blockHash);
+			// var blockHash = "000000000000085a032822ec22783149b3af4d590634038c7dfe217f2b3c68bf";
+			var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
+			var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
+			console.log("hmacOut32: " + randomBits);
+			console.log("hmacOut32Length: " + sjcl.bitArray.bitLength(randomBits));
 
-		selectLotteryWinners(randomBits, numParticipants, numWinners);
+			selectLotteryWinners(randomBits, numParticipants, numWinners);
+		}).fail(function(textStatus, error)
+		{
+			console.log("Error: " + textStatus + " " + error);
+		});
 	}
 	reader.readAsText(file);
 }
@@ -95,9 +101,9 @@ function selectLotteryWinners(randomBits, numParticipants, numWinners)
 	var concatenated = "";
 	for (var i = 0; i < numParticipants; i++) {
 		concatenated = randomBits + "" + i;
-		console.log("concatenated" + i + ": " + concatenated);
+		// console.log("concatenated" + i + ": " + concatenated);
 		indexHash = sjcl.hash.sha256.hash(concatenated);
-		console.log("hash" + i + ": " + indexHash);
+		// console.log("hash" + i + ": " + indexHash);
 		tuples.push([i, indexHash]);
 	}
 	console.log(tuples[0]);
