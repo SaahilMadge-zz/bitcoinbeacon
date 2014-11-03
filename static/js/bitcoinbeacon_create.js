@@ -159,6 +159,24 @@ function setFields()
 		});
 	}
 	setFieldInputBehavior();
+	$('#submitButton').click(function(event)
+	{
+		event.preventDefault();
+		$.post("/created", 
+		{
+			futureBlockNum: futureBlockNum.stringVal,
+			lotteryDetails: {
+				numParticipants: numParticipantsVal,
+				numWinners : numWinnersVal
+			},
+			randomKey : 128,
+		}, function(returned_data)
+		{
+			console.log(returned_data);
+			alert("/manifest/"+returned_data);
+			window.location.href = "/manifest/" + returned_data;
+		});
+	});
 }
 
 function getFutureBlockNum(futureBlockNumVar)
@@ -201,8 +219,6 @@ function getFutureBlockNum(futureBlockNumVar)
 		console.log("Error: " + textStatus + " " + error);
 	});	
 }
-
-
 
 $(document).ready(function()
 {

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Manifest {{ id }}
+	</title>
+</head>
+<body>
+	<div id="manifestContainer">
+		{#
+		{ <br>
+		{% for key in manifest %}
+			{% if key == 'lotteryDetails' %}
+				{ 
+
+				{% for detailKey in key %}
+
+
+			{{ key }} : {{ manifest[key] }}
+		{% endfor %}
+		#}
+		{{ manifest }}
+	</div>
+</body>
