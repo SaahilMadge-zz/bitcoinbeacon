@@ -38,12 +38,13 @@ class SaveManifest(webapp2.RequestHandler):
 		manifestContent = json.loads(self.request.body)
 		logging.info(manifestContent)
 
-		def generateManifestID():
-			return ''.join(random.choice('abcdefghjkmnpqrtuvwxyz2346789') for _ in range(5))
+		# def generateManifestID():
+		# 	return ''.join(random.choice('abcdefghjkmnpqrtuvwxyz2346789') for _ in range(5))
 
-		manifest_id = generateManifestID()
-		while(Manifest.get_by_id(manifest_id)):
-			manifest_id = generateManifestID()
+		# manifest_id = generateManifestID()
+		# while(Manifest.get_by_id(manifest_id)):
+		# 	manifest_id = generateManifestID()
+		manifest_id = manifestContent['hashOutputString']
 
 		logging.info(manifest_id)
 

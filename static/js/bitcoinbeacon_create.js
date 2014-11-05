@@ -38,11 +38,25 @@ function setFields()
 	resultsTimeVal = resultsTime.val();
 
 	var futureBlockNum = {stringVal: ""};
+	var hashOutputString;
 
 	// update the manifest window
 	var manifestWindow = $('#manifestWindow');
 	function updateManifest()
 	{
+		// Find the hash of the inputs
+		var allInputsConcatenated = futureBlockNum.stringVal + numParticipantsVal + "" + numWinnersVal + "" + $.now()
+		console.log("allInputsConcatenated: " + allInputsConcatenated);
+		// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
+		// console.log(allInputsConcatenatedArray);
+		var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+		console.log("hashOutput: " + hashOutput);
+		// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+		var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+		console.log(hexOfHash);
+		hashOutputString = hexOfHash.toString()
+		console.log("hashOutputString: " + hashOutputString);
+
 		manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
 		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipantsVal + ", <br>"
 		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinnersVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\": <br> \}");
@@ -162,15 +176,17 @@ function setFields()
 	$('#submitButton').click(function(event)
 	{
 		event.preventDefault();
-		$.post("/created", 
+		// var manifestJson = { futureBlockNum :  }
+		$.post("/created", JSON.stringify(
 		{
 			futureBlockNum: futureBlockNum.stringVal,
 			lotteryDetails: {
 				numParticipants: numParticipantsVal,
-				numWinners : numWinnersVal
+				numWinners : numWinnersVal,
 			},
 			randomKey : 128,
-		}, function(returned_data)
+			hashOutputString : hashOutputString,
+		}), function(returned_data)
 		{
 			console.log(returned_data);
 			alert("/manifest/"+returned_data);
