@@ -24,5 +24,12 @@
 		#}
 		{{ manifest }}
 	</div>
+	<div id="futureBlockNum">
+		{% for key in manifest %}
+			{% if key == 'futureBlockNum' %}
+				{{ manifest[key] }}
+			{% endif %}
+		{% endfor %}
+	</div>
 	<div id="updatedTime"></div>
 </body>

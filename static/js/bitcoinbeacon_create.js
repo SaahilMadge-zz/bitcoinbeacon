@@ -184,7 +184,7 @@ function setFields()
 				numParticipants: numParticipantsVal,
 				numWinners : numWinnersVal,
 			},
-			randomKey : 128,
+			randomKey : "128",
 			hashOutputString : hashOutputString,
 		}), function(returned_data)
 		{
