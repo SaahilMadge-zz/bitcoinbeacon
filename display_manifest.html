@@ -24,12 +24,17 @@
 		#}
 		{{ manifest }}
 	</div>
-	<div id="futureBlockNum">
+<!-- 	<div id="futureBlockNum">
 		{% for key in manifest %}
 			{% if key == 'futureBlockNum' %}
 				{{ manifest[key] }}
 			{% endif %}
 		{% endfor %}
-	</div>
+	</div> -->
+	{% for key in manifest %}
+		<div id="{{key}}">{{ manifest[key] }}</div><br>
+	{% endfor %}
 	<div id="updatedTime"></div>
+	<button type="button" id="processLottery" val="Get results!">Get results!</button>
+	<div id="winnersPane"></div>
 </body>

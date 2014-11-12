@@ -2,10 +2,13 @@
 <html>
 <head>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.timepicker.min.js"></script>
 	<script type="text/javascript" src="/static/js/sjcl.js"></script>
 	<script type="text/javascript" src="/static/js/bitcoinbeacon_create.js"></script>
 	<link rel="stylesheet" type="text/css" href="/static/css/bitcoinbeacon_create.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/css/jquery.timepicker.css"/>
 
 	<title>
 		Create a new lottery
@@ -23,9 +26,28 @@
 		Number of participants: <input type="text" name="numParticipants" id="numParticipants"><br>
 		Number of winners: <input type="text" name="numWinners" id="numWinners"><br>
 		Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
-		Time to make results available: <input type="text" name="resultsTime" id="resultsTime"><br>
+		Time to make results available: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input">
+<!-- 		<div class="ui-timepicker-wrapper ui-timepicker-positioned-top optional-custom-classname" tabindex="-1">
+		    <ul class="ui-timepicker-list">
+		        <li>12:00am</li>
+		        <li>12:30am</li>
+		        <li>1:00am</li>
+		        <li>1:30am</li>
+		        <li>2:00am</li>
+		        <li>2:30am</li>
+		        <li>4:30pm</li>
+		        <li class="ui-timepicker-selected">5:00pm</li>
+		        <li class="ui-timepicker-disabled">5:30pm</li>
+		        <li>6:00pm <span class="ui-timepicker-duration">(1 hour)</span></li>
+		        <li>6:30pm</li>
+		        ...
+		        <li>11:30pm</li>
+		    </ul>
+		</div> -->
+		<br>
 		<!-- <input type="submit" value="Create my manifest!" id="newLotterySubmission"> -->
-		Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script">
+		Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script" id="scriptInput">
+		<div id="fileInformation"></div>
 		<div id="manifestWindow"></div>
 		<!-- <input type="submit" value="Submit the manifest!"> -->
 	</form>
