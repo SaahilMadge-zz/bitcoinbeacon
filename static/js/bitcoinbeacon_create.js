@@ -8,7 +8,8 @@ var scriptText;
 function printFileInfo(file)
 {
 	console.log("printing file info");
-	$('#fileInformation').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
+	$('#fileInformation1').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
+	$('#fileInformation2').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
 }
 
 function handleFileSelect(evt)
@@ -53,6 +54,8 @@ function setFields1(randomKey)
 	var resultsTime = $('#resultsTime1');
 	var participantsList = $('#participantList1');
 	// resultsTime.css("color", 'gray');
+	var manifestWindow = $('#manifestWindow1');
+	var submitButton = $('#submitButton1');
 
 	// create boolean variables ot let us know whether the fields have been set or not
 	// var numParticipantsSet = false;
@@ -73,7 +76,7 @@ function setFields1(randomKey)
 	var resultsTimeVal;
 	// resultsDateVal = resultsDate.val();
 	// resultsTimeVal = resultsTime.val();
-	$('#resultsDate').datepicker({
+	resultsDate.datepicker({
 		onSelect: function(dateText, inst){
 			resultsDateVal = dateText;
 			console.log(resultsDateVal);
@@ -90,9 +93,9 @@ function setFields1(randomKey)
 		},
 	});
 
-	$('#resultsTime').timepicker({
+	resultsTime.timepicker({
 		selectTime: function(){
-			console.log($('#resultsTime').getVal())
+			console.log(resultsTime.getVal())
 		},
 	});
 
@@ -100,7 +103,6 @@ function setFields1(randomKey)
 	var hashOutputString;
 
 	// update the manifest window
-	var manifestWindow = $('#manifestWindow1');
 	function updateManifest()
 	{
 		// Find the hash of the inputs
@@ -233,7 +235,241 @@ function setFields1(randomKey)
 	}
 	setFieldInputBehavior();
 
-	$('#submitButton1').click(function(event)
+	submitButton.click(function(event)
+	{
+		if (resultsDateSet && resultsTimeSet)
+		{
+			event.preventDefault();
+			// var manifestJson = { futureBlockNum :  }
+			var namesList = participantsList.val();
+			if (namesList !== "")
+			{
+				for (var i = 0; i < namesList.length; i++)
+				{
+					namesList[i] = namesList[i].trim();
+				}
+			}
+			$.post("/created", JSON.stringify(
+			{
+				futureBlockNum: futureBlockNum.stringVal,
+				lotteryDetails: {
+					numParticipants: numParticipants.val(),
+					numWinners : numWinners.val(),
+					participantsList: namesList,
+				},
+				randomKey : randomKey,
+				hashOutputString : hashOutputString,
+				scriptText: scriptText,
+			}), function(returned_data)
+			{
+				console.log(returned_data);
+				alert("/manifest/"+returned_data);
+				window.location.href = "/manifest/" + returned_data;
+			});
+		}
+	});
+}
+
+function setFields2(randomKey)
+{
+	console.log("randomKey: " + randomKey);
+	// initialize the field values, make them gray
+	// var numParticipantsInitText = "35";
+	// var numWinnersInitText = "2";
+	// var resultsDateInitText = "10/5/14";
+	// var resultsTimeInitText = "4:50 PM";
+
+	var numParticipants = $('#numParticipants2');
+	// numParticipants.css("color", 'gray');
+	var numWinners = $('#numWinners2');
+	// numWinners.css("color", 'gray');
+	var resultsDate = $('#resultsDate2');
+	// resultsDate.css("color", 'gray');
+	var resultsTime = $('#resultsTime2');
+	var participantsList = $('#participantList2');
+	// resultsTime.css("color", 'gray');
+	var manifestWindow = $('#manifestWindow2');
+	var submitButton = $('#submitButton2');
+
+	// create boolean variables ot let us know whether the fields have been set or not
+	// var numParticipantsSet = false;
+	// var numWinnersSet = false;
+	var resultsDateSet = false;
+	var resultsTimeSet = false;
+
+	// numParticipants.val(numParticipantsInitText);
+	// numWinners.val(numWinnersInitText);
+	// resultsDate.val(resultsDateInitText);
+	// resultsTime.val(resultsTimeInitText);
+
+	numParticipantsVal = numParticipants.val();
+	numWinnersVal = numWinners.val();
+	participantsListVal = participantsList.val();
+
+	var resultsDateVal;
+	var resultsTimeVal;
+	// resultsDateVal = resultsDate.val();
+	// resultsTimeVal = resultsTime.val();
+	resultsDate.datepicker({
+		onSelect: function(dateText, inst){
+			resultsDateVal = dateText;
+			console.log(resultsDateVal);
+			resultsDateSet = true;
+			if (resultsDateSet && resultsTimeSet)
+			{
+				getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
+				setTimeout(function()
+				{
+					console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+					updateManifest();
+				}, 1000);
+			}
+		},
+	});
+
+	resultsTime.timepicker({
+		selectTime: function(){
+			console.log(resultsTime.getVal())
+		},
+	});
+
+	var futureBlockNum = {stringVal: ""};
+	var hashOutputString;
+
+	// update the manifest window
+	function updateManifest()
+	{
+		// Find the hash of the inputs
+		var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
+		console.log("allInputsConcatenated: " + allInputsConcatenated);
+		// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
+		// console.log(allInputsConcatenatedArray);
+		var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+		console.log("hashOutput: " + hashOutput);
+		// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+		var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+		console.log(hexOfHash);
+		hashOutputString = hexOfHash.toString()
+		console.log("hashOutputString: " + hashOutputString);
+		console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
+
+		if (typeof scriptText != "undefined")
+		{
+			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptText: " + scriptText + "<br>\}");
+		}
+		else
+		{
+			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
+		}
+	}
+
+	updateManifest();
+
+	function setFieldInputBehavior()
+	{
+		// numParticipants.focus(function(eventObject) {
+		// 	if (!numParticipantsSet)
+		// 	{
+		// 		numParticipants.val('');
+		// 		numParticipants.css("color", 'black');
+		// 	}
+		// });
+		// numWinners.focus(function(eventObject) {
+		// 	if (!numWinnersSet)
+		// 	{
+		// 		numWinners.val('');
+		// 		numWinners.css("color", 'black');
+		// 	}
+		// });
+		// resultsDate.focus(function(eventObject)
+		// {
+		// 	if (!resultsDateSet)
+		// 	{
+		// 		resultsDate.val('');
+		// 		resultsDate.css("color", 'black');
+		// 	}
+		// });
+		// resultsTime.focus(function(eventObject)
+		// {
+		// 	if (!resultsTimeSet)
+		// 	{
+		// 		resultsTime.val('');
+		// 		resultsTime.css("color", "black");
+		// 	}
+		// });
+
+		numParticipants.blur(function(eventObject) 
+		{
+			if (numParticipants.val() == '')
+			{
+				// numParticipants.val(numParticipantsInitText);
+				// numParticipants.css("color", "gray");
+				// numParticipantsSet=false;
+			}
+			else
+			{
+				// numParticipantsSet = true;
+				// numParticipantsVal = numParticipants.val();
+				updateManifest();
+			}
+		});
+		numWinners.blur(function(eventObject) 
+		{
+			if (numWinners.val() == '')
+			{
+				// numWinners.val(numWinnersInitText);
+				// numWinners.css("color", "gray");
+				// numWinnersSet=false;
+			}
+			else
+			{
+				// numWinnersSet = true;
+				// numWinnersVal = numWinners.val();
+				updateManifest();
+			}
+		});
+		participantsList.blur(function(eventObject) 
+		{
+			updateManifest();
+			console.log(participantsList.val().split(","));
+		})
+		resultsTime.blur(function(eventObject)
+		{
+		// 	if (resultsTime.val() == '')
+		// 	{
+		// 		resultsTime.val(resultsTimeInitText);
+		// 		resultsTime.css("color", 'gray');
+		// 		resultsTimeSet=false;
+		// 	}
+		// 	else
+		// 	{
+				resultsTimeVal = resultsTime.val();
+				console.log("resultsTimeVal: " + resultsTimeVal);
+				resultsTimeSet = true;
+				if (resultsDateSet && resultsTimeSet)
+				{
+					console.log('here!');
+					getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
+					setTimeout(function()
+					{
+						console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+						updateManifest();
+					}, 1000);
+				}
+
+		// 	}
+		});
+	}
+	setFieldInputBehavior();
+
+	submitButton.click(function(event)
 	{
 		if (resultsDateSet && resultsTimeSet)
 		{
