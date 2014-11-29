@@ -22,36 +22,85 @@
 			Create a new lottery!
 		</p>
 	</div>
-	<form id ="createLotteryForm">
-		Number of participants: <input type="text" name="numParticipants" id="numParticipants"><br>
-		Number of winners: <input type="text" name="numWinners" id="numWinners"><br>
-		Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
-		Time to make results available: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input">
-<!-- 		<div class="ui-timepicker-wrapper ui-timepicker-positioned-top optional-custom-classname" tabindex="-1">
-		    <ul class="ui-timepicker-list">
-		        <li>12:00am</li>
-		        <li>12:30am</li>
-		        <li>1:00am</li>
-		        <li>1:30am</li>
-		        <li>2:00am</li>
-		        <li>2:30am</li>
-		        <li>4:30pm</li>
-		        <li class="ui-timepicker-selected">5:00pm</li>
-		        <li class="ui-timepicker-disabled">5:30pm</li>
-		        <li>6:00pm <span class="ui-timepicker-duration">(1 hour)</span></li>
-		        <li>6:30pm</li>
-		        ...
-		        <li>11:30pm</li>
-		    </ul>
-		</div> -->
-		<br>
-		<!-- <input type="submit" value="Create my manifest!" id="newLotterySubmission"> -->
-		Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script" id="scriptInput">
-		<div id="fileInformation"></div>
-		<div id="manifestWindow"></div>
-		<!-- <input type="submit" value="Submit the manifest!"> -->
-	</form>
-	<button type="button" id="submitButton">Submit the manifest</button>
+
+	<div id="tabs">
+		<ul>
+		    <li><a href="#fragment-1">Default Lottery</a></li>
+		    <li><a href="#fragment-2">Weighted Lottery</a></li>
+		    <li><a href="#fragment-3">Three</a></li>
+		</ul>
+
+		<div id="fragment-1">
+			<p id="lotteryDescription1">In this type of lottery, each person is equally likely to win, and each person can only win once.</p>
+			<form id ="createLotteryForm1">
+				Number of participants: <input type="text" name="numParticipants1" id="numParticipants1"><br>
+				Number of winners: <input type="text" name="numWinners1" id="numWinners1"><br>
+				Date to make results available: <input type="text" name="resultsDate1" id="resultsDate1"><br>
+				Time to make results available: <input type="text" name="resultsTime1" id="resultsTime1" class="ui-timepicker-input">
+		<!-- 		<div class="ui-timepicker-wrapper ui-timepicker-positioned-top optional-custom-classname" tabindex="-1">
+				    <ul class="ui-timepicker-list">
+				        <li>12:00am</li>
+				        <li>12:30am</li>
+				        <li>1:00am</li>
+				        <li>1:30am</li>
+				        <li>2:00am</li>
+				        <li>2:30am</li>
+				        <li>4:30pm</li>
+				        <li class="ui-timepicker-selected">5:00pm</li>
+				        <li class="ui-timepicker-disabled">5:30pm</li>
+				        <li>6:00pm <span class="ui-timepicker-duration">(1 hour)</span></li>
+				        <li>6:30pm</li>
+				        ...
+				        <li>11:30pm</li>
+				    </ul>
+				</div> -->
+				<br>
+				Add participants (write the names separated by commas:) <input type="text" name="participantList1" id="participantList1"><br>
+				<!-- <input type="submit" value="Create my manifest!" id="newLotterySubmission"> -->
+				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script1" id="scriptInput1">
+				<div id="fileInformation1"></div>
+				<div id="manifestWindow1" class="manifestWindow"></div>
+				<!-- <input type="submit" value="Submit the manifest!"> -->
+			</form>
+			<button type="button" id="submitButton1">Submit the manifest</button>
+		</div>
+
+		<div id="fragment-2">
+			<p id="lotteryDescription2">In this type of lottery, each person is equally likely to win, and each person can only win once.</p>
+			<form id ="createLotteryForm2">
+				Number of participants: <input type="text" name="numParticipants2" id="numParticipants2"><br>
+				Number of winners: <input type="text" name="numWinners2" id="numWinners2"><br>
+				Date to make results available: <input type="text" name="resultsDate2" id="resultsDate2"><br>
+				Time to make results available: <input type="text" name="resultsTime2" id="resultsTime2" class="ui-timepicker-input">
+		<!-- 		<div class="ui-timepicker-wrapper ui-timepicker-positioned-top optional-custom-classname" tabindex="-1">
+				    <ul class="ui-timepicker-list">
+				        <li>12:00am</li>
+				        <li>12:30am</li>
+				        <li>1:00am</li>
+				        <li>1:30am</li>
+				        <li>2:00am</li>
+				        <li>2:30am</li>
+				        <li>4:30pm</li>
+				        <li class="ui-timepicker-selected">5:00pm</li>
+				        <li class="ui-timepicker-disabled">5:30pm</li>
+				        <li>6:00pm <span class="ui-timepicker-duration">(1 hour)</span></li>
+				        <li>6:30pm</li>
+				        ...
+				        <li>11:30pm</li>
+				    </ul>
+				</div> -->
+				<br>
+				Add participants (write the names separated by commas:) <input type="text" name="participantList2" id="participantList2"><br>
+				<!-- <input type="submit" value="Create my manifest!" id="newLotterySubmission"> -->
+				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script2" id="scriptInput2">
+				<div id="fileInformation2"></div>
+				<div id="manifestWindow2" class="manifestWindow"></div>
+				<!-- <input type="submit" value="Submit the manifest!"> -->
+			</form>
+			<button type="button" id="submitButton2">Submit the manifest</button>
+		</div>
+
+	</div>
 </body>
 
 </html>

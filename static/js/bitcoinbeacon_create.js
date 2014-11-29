@@ -35,38 +35,40 @@ function readFile()
 	reader.readAsText(file);
 }
 
-function setFields()
+function setFields1(randomKey)
 {
-
-
+	console.log("randomKey: " + randomKey);
 	// initialize the field values, make them gray
-	var numParticipantsInitText = "35";
-	var numWinnersInitText = "2";
+	// var numParticipantsInitText = "35";
+	// var numWinnersInitText = "2";
 	// var resultsDateInitText = "10/5/14";
 	// var resultsTimeInitText = "4:50 PM";
 
-	var numParticipants = $('#numParticipants');
-	numParticipants.css("color", 'gray');
-	var numWinners = $('#numWinners');
-	numWinners.css("color", 'gray');
-	var resultsDate = $('#resultsDate');
+	var numParticipants = $('#numParticipants1');
+	// numParticipants.css("color", 'gray');
+	var numWinners = $('#numWinners1');
+	// numWinners.css("color", 'gray');
+	var resultsDate = $('#resultsDate1');
 	// resultsDate.css("color", 'gray');
-	var resultsTime = $('#resultsTime');
+	var resultsTime = $('#resultsTime1');
+	var participantsList = $('#participantList1');
 	// resultsTime.css("color", 'gray');
 
 	// create boolean variables ot let us know whether the fields have been set or not
-	var numParticipantsSet = false;
-	var numWinnersSet = false;
+	// var numParticipantsSet = false;
+	// var numWinnersSet = false;
 	var resultsDateSet = false;
 	var resultsTimeSet = false;
 
-	numParticipants.val(numParticipantsInitText);
-	numWinners.val(numWinnersInitText);
+	// numParticipants.val(numParticipantsInitText);
+	// numWinners.val(numWinnersInitText);
 	// resultsDate.val(resultsDateInitText);
 	// resultsTime.val(resultsTimeInitText);
 
 	numParticipantsVal = numParticipants.val();
 	numWinnersVal = numWinners.val();
+	participantsListVal = participantsList.val();
+
 	var resultsDateVal;
 	var resultsTimeVal;
 	// resultsDateVal = resultsDate.val();
@@ -98,11 +100,11 @@ function setFields()
 	var hashOutputString;
 
 	// update the manifest window
-	var manifestWindow = $('#manifestWindow');
+	var manifestWindow = $('#manifestWindow1');
 	function updateManifest()
 	{
 		// Find the hash of the inputs
-		var allInputsConcatenated = futureBlockNum.stringVal + numParticipantsVal + "" + numWinnersVal + "" + $.now()
+		var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
 		console.log("allInputsConcatenated: " + allInputsConcatenated);
 		// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
 		// console.log(allInputsConcatenatedArray);
@@ -118,15 +120,17 @@ function setFields()
 		if (typeof scriptText != "undefined")
 		{
 			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipantsVal + ", <br>"
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinnersVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\": <br>" 
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
 			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptText: " + scriptText + "<br>\}");
 		}
 		else
 		{
 			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipantsVal + ", <br>"
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinnersVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\": <br>\}");
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
 		}
 	}
 
@@ -134,20 +138,20 @@ function setFields()
 
 	function setFieldInputBehavior()
 	{
-		numParticipants.focus(function(eventObject) {
-			if (!numParticipantsSet)
-			{
-				numParticipants.val('');
-				numParticipants.css("color", 'black');
-			}
-		});
-		numWinners.focus(function(eventObject) {
-			if (!numWinnersSet)
-			{
-				numWinners.val('');
-				numWinners.css("color", 'black');
-			}
-		});
+		// numParticipants.focus(function(eventObject) {
+		// 	if (!numParticipantsSet)
+		// 	{
+		// 		numParticipants.val('');
+		// 		numParticipants.css("color", 'black');
+		// 	}
+		// });
+		// numWinners.focus(function(eventObject) {
+		// 	if (!numWinnersSet)
+		// 	{
+		// 		numWinners.val('');
+		// 		numWinners.css("color", 'black');
+		// 	}
+		// });
 		// resultsDate.focus(function(eventObject)
 		// {
 		// 	if (!resultsDateSet)
@@ -165,34 +169,41 @@ function setFields()
 		// 	}
 		// });
 
-		numParticipants.blur(function(eventObject) {
+		numParticipants.blur(function(eventObject) 
+		{
 			if (numParticipants.val() == '')
 			{
-				numParticipants.val(numParticipantsInitText);
-				numParticipants.css("color", "gray");
-				numParticipantsSet=false;
+				// numParticipants.val(numParticipantsInitText);
+				// numParticipants.css("color", "gray");
+				// numParticipantsSet=false;
 			}
 			else
 			{
-				numParticipantsSet = true;
-				numParticipantsVal = numParticipants.val();
+				// numParticipantsSet = true;
+				// numParticipantsVal = numParticipants.val();
 				updateManifest();
 			}
 		});
-		numWinners.blur(function(eventObject) {
+		numWinners.blur(function(eventObject) 
+		{
 			if (numWinners.val() == '')
 			{
-				numWinners.val(numWinnersInitText);
-				numWinners.css("color", "gray");
-				numWinnersSet=false;
+				// numWinners.val(numWinnersInitText);
+				// numWinners.css("color", "gray");
+				// numWinnersSet=false;
 			}
 			else
 			{
-				numWinnersSet = true;
-				numWinnersVal = numWinners.val();
+				// numWinnersSet = true;
+				// numWinnersVal = numWinners.val();
 				updateManifest();
 			}
 		});
+		participantsList.blur(function(eventObject) 
+		{
+			updateManifest();
+			console.log(participantsList.val().split(","));
+		})
 		resultsTime.blur(function(eventObject)
 		{
 		// 	if (resultsTime.val() == '')
@@ -222,20 +233,29 @@ function setFields()
 	}
 	setFieldInputBehavior();
 
-	$('#submitButton').click(function(event)
+	$('#submitButton1').click(function(event)
 	{
 		if (resultsDateSet && resultsTimeSet)
 		{
 			event.preventDefault();
 			// var manifestJson = { futureBlockNum :  }
+			var namesList = participantsList.val();
+			if (namesList !== "")
+			{
+				for (var i = 0; i < namesList.length; i++)
+				{
+					namesList[i] = namesList[i].trim();
+				}
+			}
 			$.post("/created", JSON.stringify(
 			{
 				futureBlockNum: futureBlockNum.stringVal,
 				lotteryDetails: {
-					numParticipants: numParticipantsVal,
-					numWinners : numWinnersVal,
+					numParticipants: numParticipants.val(),
+					numWinners : numWinners.val(),
+					participantsList: namesList,
 				},
-				randomKey : "128",
+				randomKey : randomKey,
 				hashOutputString : hashOutputString,
 				scriptText: scriptText,
 			}), function(returned_data)
@@ -296,6 +316,10 @@ function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
 
 $(document).ready(function()
 {
-	$('#scriptInput').change(handleFileSelect);
-	setFields();
+	$('#scriptInput1').change(handleFileSelect);
+	$('#scriptInput2').change(handleFileSelect);
+	$('#tabs').tabs();
+	var randomKey = sjcl.random.randomWords(4);
+	setFields1(randomKey);
+	setFields2();
 });

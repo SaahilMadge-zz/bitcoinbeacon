@@ -57,7 +57,7 @@ function selectLotteryWinnersDefault(randomBits, numParticipants, numWinners)
 		winnersPane.append("" + tuples[i][0] + " ");
 }
 
-function processLottery()
+function processDefaultLottery()
 {
 	// get the JSON fields
 	// manifestJSON = JSON.parse(reader.result);
@@ -76,7 +76,7 @@ function processLottery()
 	lotteryDetails=JSON.parse(lotteryDetailsString);
 	numParticipants = lotteryDetails.numParticipants;
 	numWinners = lotteryDetails.numWinners;
-	randomKey = $('#randomKey').html();
+	randomKeyBitArray = $('#randomKey').html();
 	var scriptText;
 	if ($('#scriptText').length)
 	{
@@ -87,11 +87,11 @@ function processLottery()
 	console.log("blockNumber: " + blockNumber + ", numParticipants: " + numParticipants + ", numWinners: " + numWinners + ", randomKey: " + randomKey);
 
 	// convert the random key to hex
-	randomKeyHex = randomKey.toString(16);
-	console.log("randomKey to array: " + randomKeyHex);
+	// randomKeyHex = randomKey.toString(16);
+	// console.log("randomKey to array: " + randomKeyHex);
 
-	// convert the hex to bitArray for use in sjcl
-	randomKeyBitArray = sjcl.codec.hex.toBits(randomKeyHex);
+	// // convert the hex to bitArray for use in sjcl
+	// randomKeyBitArray = sjcl.codec.hex.toBits(randomKeyHex);
 	console.log(randomKeyBitArray);
 
 	// query blockchain.info for the hash of that block
