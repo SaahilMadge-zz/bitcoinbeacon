@@ -3,7 +3,6 @@
 // var $resultsTimeField = $('#resultsTime');
 var latestBlockURL = "http://blockchain.info/latestblock";
 var otherURL = "https://blockchain.info/q/getblockcount";
-var scriptText;
 
 function printFileInfo(file)
 {
@@ -56,6 +55,7 @@ function setFields1(randomKey)
 	// resultsTime.css("color", 'gray');
 	var manifestWindow = $('#manifestWindow1');
 	var submitButton = $('#submitButton1');
+	var scriptText = defaultLotteryScript;
 
 	// create boolean variables ot let us know whether the fields have been set or not
 	// var numParticipantsSet = false;
@@ -119,21 +119,21 @@ function setFields1(randomKey)
 		console.log("hashOutputString: " + hashOutputString);
 		console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
 
-		if (typeof scriptText != "undefined")
-		{
+		// if (typeof scriptText != "undefined")
+		// {
 			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
 			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
 			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
 			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptText: " + scriptText + "<br>\}");
-		}
-		else
-		{
-			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
-		}
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>\}");
+		// }
+		// else
+		// {
+		// 	manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+		// 	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
+		// }
 	}
 
 	updateManifest();
@@ -296,6 +296,7 @@ function setFields2(randomKey)
 	// var numWinnersSet = false;
 	var resultsDateSet = false;
 	var resultsTimeSet = false;
+	var scriptText = fakeLotteryScript;
 
 	// numParticipants.val(numParticipantsInitText);
 	// numWinners.val(numWinnersInitText);
@@ -557,5 +558,5 @@ $(document).ready(function()
 	$('#tabs').tabs();
 	var randomKey = sjcl.random.randomWords(4);
 	setFields1(randomKey);
-	setFields2();
+	setFields2(randomKey);
 });
