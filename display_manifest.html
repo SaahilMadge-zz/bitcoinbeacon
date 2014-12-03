@@ -4,6 +4,7 @@
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="/static/js/sjcl.js"></script>
 	<script type="text/javascript" src="/static/js/bitcoinbeacon_display.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/css/bitcoinbeacon_display.css"/>
 	<title>
 		Manifest {{ id }}
 	</title>
@@ -22,7 +23,7 @@
 			{{ key }} : {{ manifest[key] }}
 		{% endfor %}
 		#}
-		{{ manifest }}
+		<!-- {{ manifest }} -->
 	</div>
 <!-- 	<div id="futureBlockNum">
 		{% for key in manifest %}
@@ -32,7 +33,7 @@
 		{% endfor %}
 	</div> -->
 	{% for key in manifest %}
-		<div id="{{key}}">{{ manifest[key] }}</div><br>
+		<div class="manifestDetails"> {{ key }}: <div id="{{key}}" class="manifestDetailsValues"> {{ manifest[key] }}</div></div><br>
 	{% endfor %}
 	<div id="updatedTime"></div>
 	<button type="button" id="processLottery" val="Get results!">Get results!</button>

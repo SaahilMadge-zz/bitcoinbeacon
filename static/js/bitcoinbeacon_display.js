@@ -92,6 +92,8 @@ function processLottery()
 	numWinners = lotteryDetails.numWinners;
 	participantsList = lotteryDetails.participantsList;
 	randomKeyBitArray = $('#randomKey').html();
+	allowMultipleWins = $('#allowMultipleWins').html();
+	console.log()
 
 	console.log('blockNumber: ' + blockNumber + ', numParticipants: ' + numParticipants + ', numWinners: ' + numWinners + ', randomKey: ' + randomKeyBitArray);
 	console.log(participantsList);
@@ -168,7 +170,8 @@ $(document).ready(function()
 	{
 		console.log("Error: " + textStatus + " " + error);
 	});	
-
+	allowMultipleWins = $('#allowMultipleWins').html();
+	console.log("allowMultipleWins: " + allowMultipleWins);
 	// $.ajax(
 	// {
 	// 	type: "GET",

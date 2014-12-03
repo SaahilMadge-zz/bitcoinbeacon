@@ -3,6 +3,7 @@
 // var $resultsTimeField = $('#resultsTime');
 var latestBlockURL = "http://blockchain.info/latestblock";
 var otherURL = "https://blockchain.info/q/getblockcount";
+var blockExplorerURL = "http://blockexplorer.com/q/getblockcount";
 
 function printFileInfo(file)
 {
@@ -118,6 +119,7 @@ function setFields1(randomKey)
 		hashOutputString = hexOfHash.toString()
 		console.log("hashOutputString: " + hashOutputString);
 		console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
+		console.log("radioButton: " + $('input[name="radio1"]:checked').val());
 
 		// if (typeof scriptText != "undefined")
 		// {
@@ -125,7 +127,8 @@ function setFields1(randomKey)
 			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
 			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
 			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>\}");
+			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
+			+ "\}");
 		// }
 		// else
 		// {
@@ -260,6 +263,7 @@ function setFields1(randomKey)
 				randomKey : randomKey,
 				hashOutputString : hashOutputString,
 				scriptText: scriptText,
+				allowMultipleWins: $('input[name="radio1"]:checked').val(),
 			}), function(returned_data)
 			{
 				console.log(returned_data);
@@ -354,21 +358,22 @@ function setFields2(randomKey)
 		console.log("hashOutputString: " + hashOutputString);
 		console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
 
-		if (typeof scriptText != "undefined")
-		{
+		// if (typeof scriptText != "undefined")
+		// {
 			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
 			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
 			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
 			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scriptText: " + scriptText + "<br>\}");
-		}
-		else
-		{
-			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
-		}
+			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
+			+ "\}");
+		// }
+		// else
+		// {
+		// 	manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+		// 	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
+		// }
 	}
 
 	updateManifest();
@@ -522,6 +527,7 @@ function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
 		url: otherURL,
 	}).done(function(text)
 	{
+		// console.log(data)
 		latestblock = parseInt(text);
 		console.log("latestBlock: " + text);
 
@@ -548,14 +554,21 @@ function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
 	}).fail(function(textStatus, error)
 	{
 		console.log("Error: " + textStatus + " " + error);
-	});	
+	});
+}
+
+function initJQueryUI()
+{
+	$('#tabs').tabs();
+	$('#radio1').buttonset();
+	$('#radio2').buttonset();
+	$('#radio3').buttonset();
 }
 
 $(document).ready(function()
 {
-	$('#scriptInput1').change(handleFileSelect);
-	$('#scriptInput2').change(handleFileSelect);
-	$('#tabs').tabs();
+	initJQueryUI();
+	$('#scriptInput3').change(handleFileSelect);
 	var randomKey = sjcl.random.randomWords(4);
 	setFields1(randomKey);
 	setFields2(randomKey);

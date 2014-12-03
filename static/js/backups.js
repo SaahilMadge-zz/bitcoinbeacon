@@ -1,4 +1,4 @@
-function processDefualtLottery() 
+function processDefaultLottery() 
 {
 	// get the JSON fields
 	// manifestJSON = JSON.parse(reader.result);
