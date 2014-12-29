@@ -25,7 +25,7 @@ function extractRandomness(blockNumber, randomKeyBitArray)
 		console.log('hmacOut32Length: ' + sjcl.bitArray.bitLength(randomBits));
 
 		// selectLotteryWinnersDefault(randomBits, numParticipants, numWinners);
-		return randomKeyBitArray
+		return randomBits;
 	}).fail(function(textStatus, error)
 	{
 		console.log('Error: ' + textStatus + ' ' + error);
@@ -91,11 +91,20 @@ function processLottery()
 	numParticipants = lotteryDetails.numParticipants;
 	numWinners = lotteryDetails.numWinners;
 	participantsList = lotteryDetails.participantsList;
+	participantsList = participantsList.split(",");
 	randomKeyBitArray = $('#randomKey').html();
-	allowMultipleWins = $('#allowMultipleWins').html();
-	console.log()
+	allowMultipleWins = $('#allowMultipleWins').html().toString().trim();
+	console.log("initial allowMultipleWins: " + allowMultipleWins);
+	if (allowMultipleWins === "no")
+	{
+		allowMultipleWins = false;
+	}
+	else
+	{
+		allowMultipleWins = true;
+	}
 
-	console.log('blockNumber: ' + blockNumber + ', numParticipants: ' + numParticipants + ', numWinners: ' + numWinners + ', randomKey: ' + randomKeyBitArray);
+	console.log('blockNumber: ' + blockNumber + ', numParticipants: ' + numParticipants + ', numWinners: ' + numWinners + ', randomKey: ' + randomKeyBitArray + ", allowMultipleWins: " + allowMultipleWins);
 	console.log(participantsList);
 	// convert the random key to hex
 	// randomKeyHex = randomKey.toString(16);
@@ -112,29 +121,81 @@ function processLottery()
 	// 	console.log(blockJSONData);
 	// });
 
-	var randomBits = extractRandomness(blockNumber, randomKeyBitArray);
-	while (randomBits === null)
+	function extractRandomness()
 	{
-		setTimeout(function()
+		var blockBaseURL = "https://api.blockcypher.com/v1/btc/main/blocks/";
+		console.log('url: ' + blockBaseURL + blockNumber);
+
+		$.ajax(
 		{
-			randomBits = extractRandomness(blockNumber, randomKeyBitArray);
-		}, 1000);
+			type: 'GET',
+			dataType: 'json',
+
+			// for testing, use a hardcoded block
+			// url: blockBaseURL + blockNumber,
+			url: blockBaseURL + '329500',
+			crossDomain:true,
+			contentType: 'text/plain'
+		}).done(function(json)
+		{
+			latestblock = json;
+			var blockHash = json.hash;
+			console.log('blockHash: ' + blockHash);
+			var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
+			var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
+			console.log('hmacOut32: ' + randomBits);
+			console.log('hmacOut32Length: ' + sjcl.bitArray.bitLength(randomBits));
+
+			// selectLotteryWinnersDefault(randomBits, numParticipants, numWinners);
+			// return randomBits;
+
+			// var randomBits = extractRandomness(blockNumber, randomKeyBitArray);
+			console.log("randomBitsFirst: " + randomBits);
+			// while (randomBits === null)
+			// {
+			// 	setTimeout(function()
+			// 	{
+			// 		randomBits = extractRandomness(blockNumber, randomKeyBitArray);
+			// 	}, 2000);
+			// }
+
+			var scriptText;
+			if ($('#scriptText').length)
+			{
+				scriptText = $('#scriptText').html().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+			}
+			// console.log("scriptText: " + scriptText);
+			console.log("randomBitsOutside: " + randomBits);
+			var tuples = eval(scriptText);
+			console.log("tuples.length: " + tuples.length);
+			console.log("tuples: " + tuples);
+
+			var winnersPane = $('#winnersPane');
+			winnersPane.html("<b>Winners:</b> ");
+			for (var i = 0; i < numWinners; i++)
+			{
+				if (tuples[i][0] < participantsList.length)
+				{
+					winnersPane.append("" + participantsList[tuples[i][0]]);
+				}
+				else
+				{
+					winnersPane.append("" + tuples[i][0]);
+				}
+
+				if (i < numWinners - 1)
+				{
+					winnersPane.append(", ");
+				}
+			}
+		}).fail(function(textStatus, error)
+		{
+			console.log('Error: ' + textStatus + ' ' + error);
+			return null;
+		});
 	}
 
-	var scriptText;
-	if ($('#scriptText').length)
-	{
-		scriptText = $('#scriptText').html().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-	}
-	console.log("scriptText: " + scriptText);
-	var tuples = eval(scriptText);
-
-	console.log("tuples: " + tuples);
-
-	var winnersPane = $('#winnersPane');
-	winnersPane.html("<b>Winners:</b> ");
-	for (var i = 0; i < numWinners; i++)
-		winnersPane.append("" + tuples[i][0] + " ");
+	extractRandomness();
 }
 
 $(document).ready(function()
@@ -170,8 +231,6 @@ $(document).ready(function()
 	{
 		console.log("Error: " + textStatus + " " + error);
 	});	
-	allowMultipleWins = $('#allowMultipleWins').html();
-	console.log("allowMultipleWins: " + allowMultipleWins);
 	// $.ajax(
 	// {
 	// 	type: "GET",

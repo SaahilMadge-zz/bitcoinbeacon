@@ -108,18 +108,18 @@ function setFields1(randomKey)
 	{
 		// Find the hash of the inputs
 		var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
-		console.log("allInputsConcatenated: " + allInputsConcatenated);
+		// console.log("allInputsConcatenated: " + allInputsConcatenated);
 		// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
 		// console.log(allInputsConcatenatedArray);
 		var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
-		console.log("hashOutput: " + hashOutput);
+		// console.log("hashOutput: " + hashOutput);
 		// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
 		var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
 		console.log(hexOfHash);
 		hashOutputString = hexOfHash.toString()
-		console.log("hashOutputString: " + hashOutputString);
-		console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
-		console.log("radioButton: " + $('input[name="radio1"]:checked').val());
+		// console.log("hashOutputString: " + hashOutputString);
+		// console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
+		// console.log("radioButton: " + $('input[name="radio1"]:checked').val());
 
 		// if (typeof scriptText != "undefined")
 		// {
@@ -531,26 +531,50 @@ function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
 		latestblock = parseInt(text);
 		console.log("latestBlock: " + text);
 
-		// find the difference between the current time and specified time
-		var currentDate = new Date()
-		var currentDateMs = Date.parse(currentDate)
-		var futureDateMs = Date.parse(resultsDateVal + " " + resultsTimeValFixed + " EDT")
+		$.ajax(
+		{
+			dataType: "text",
+			url: "https://blockchain.info/q/nextretarget",
+		}).done(function(retargetText)
+		{
+			nextRetargetBlock = parseInt(retargetText);
+			console.log("nextRetargetBlock: " + nextRetargetBlock);
 
-		console.log("currentDateMs: " + currentDateMs);
-		// console.log(Date.parse("October 5 2014 1:35 AM"));
-		console.log("futureDateMs:  " + futureDateMs);
+			// find the difference between the current time and specified time
+			var currentDate = new Date()
+			var currentDateMs = Date.parse(currentDate)
+			var futureDateMs = Date.parse(resultsDateVal + " " + resultsTimeValFixed + " EDT")
 
-		var difference = futureDateMs - currentDateMs;
-		var differenceMinutes = difference / 60000;
-		var differenceBlocks = Math.ceil(differenceMinutes / 10);
-		console.log("difference (ms): " + difference);
-		console.log("difference (minutes): " + differenceMinutes);
-		console.log("difference (blocks): " + differenceBlocks);
+			console.log("currentDateMs: " + currentDateMs);
+			// console.log(Date.parse("October 5 2014 1:35 AM"));
+			console.log("futureDateMs:  " + futureDateMs);
 
-		var futureBlockNum = latestblock + differenceBlocks;
-		console.log("future block number: " + futureBlockNum);
+			var difference = futureDateMs - currentDateMs;
+			var differenceMinutes = difference / 60000;
+			var differenceBlocks = Math.ceil(differenceMinutes / 10);
+			console.log("difference (ms): " + difference);
+			console.log("difference (minutes): " + differenceMinutes);
+			console.log("difference (blocks): " + differenceBlocks);
 
-		futureBlockNumVar.stringVal = futureBlockNum.toString();
+			var futureBlockNum = latestblock + differenceBlocks;
+			console.log("future block number: " + futureBlockNum);
+
+			futureBlockNumVar.stringVal = futureBlockNum.toString();
+
+			if (futureBlockNum <= nextRetargetBlock)
+			{
+				console.log("futureblock <= retargetblock");
+			}
+			else
+			{
+				diff = futureBlockNum - nextRetargetBlock;
+				console.log("total retargets till this time: " + (1 + Math.floor(diff/2016)));
+			}
+		}).fail(function(retargetTextStatus, error)
+		{
+			console.log("Error: " + textStatus + " " + error);
+		});
+
 	}).fail(function(textStatus, error)
 	{
 		console.log("Error: " + textStatus + " " + error);
