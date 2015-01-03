@@ -100,3 +100,28 @@ function selectLotteryWinnersWeighted(extractedRandomBits, numParticipants, numW
 	return tuples;
 }
 var weightedLotteryScript = '' + selectLotteryWinnersWeighted + ' selectLotteryWinnersWeighted(extractedRandomBits, numParticipants, numWinners);';
+
+function orderedLottery(extractedRandomBits, numParticipants)
+{
+	var participantOrder = [];
+	for (var i = 0; i < numParticipants; i++) 
+	{
+		concatenated = extractedRandomBits + "" + i;
+		indexHash = sjcl.hash.sha256.hash(concatenated);
+		participantOrder.push([i, indexHash]);
+	}
+
+	participantOrder.sort(function(a, b) {
+	    a = a[1];
+	    b = b[1];
+	    for (var i = 0; i < 16; i++)
+	    {
+	    	if (a[i] < b[i])
+	    		return -1;
+	    	else if (a[i] > b[i])
+	    		return 1;
+	    }
+	});
+
+	return participantOrder;
+}

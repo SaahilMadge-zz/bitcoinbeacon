@@ -13,12 +13,12 @@ function extractRandomness(blockNumber, randomKeyBitArray)
 		url: blockBaseURL + '329500',
 		crossDomain:true,
 		contentType: 'text/plain'
-	}).done(function(json)
+	}).done(function(json1)
 	{
-		latestblock = json;
+		latestblock = json1;
 		// console.log(json);
-		var blockHash = json.hash;
-		console.log('blockHash: ' + blockHash);
+		var blockHash1 = json1.hash;
+		console.log('blockHash: ' + blockHash1);
 		var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
 		var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
 		console.log('hmacOut32: ' + randomBits);

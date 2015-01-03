@@ -1,6 +1,3 @@
-// var $numParticipantsField = $('#numParticipants');
-// var $resultsDateField = $('#resultsDate');
-// var $resultsTimeField = $('#resultsTime');
 var latestBlockURL = "http://blockchain.info/latestblock";
 var otherURL = "https://blockchain.info/q/getblockcount";
 var blockExplorerURL = "http://blockexplorer.com/q/getblockcount";
@@ -16,6 +13,7 @@ function handleFileSelect(evt)
 {
 	file = evt.target.files[0];
 	console.log(file);
+	console.log("tabs: " + $('#tabs').tabs("option", "active"));
 	if (file != null)
 	{
 		printFileInfo(file);
@@ -36,6 +34,94 @@ function readFile()
 	reader.readAsText(file);
 }
 
+// create boolean variables to let us know whether the fields have been set or not
+var resultsDateSet = false;
+var resultsTimeSet = false;
+var futureBlockNum = {stringVal: ""};
+
+function setDateTimeBehavior()
+{
+	var resultsDate = $('#resultsDate');
+	var resultsTime = $('#resultsTime');
+
+	var resultsDateVal;
+	var resultsTimeVal;
+	resultsDate.datepicker({
+		onSelect: function(dateText, inst){
+			resultsDateVal = dateText;
+			console.log(resultsDateVal);
+			resultsDateSet = true;
+			if (resultsDateSet && resultsTimeSet)
+			{
+				getFutureBlockNum(resultsDateVal, resultsTimeVal);
+				setTimeout(function()
+				{
+					console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+					// updateManifest();
+				}, 1000);
+			}
+		},
+	});
+
+	resultsTime.timepicker({
+		selectTime: function(){
+			console.log(resultsTime.getVal())
+		},
+	});
+
+	resultsTime.blur(function(eventObject)
+	{
+		resultsTimeVal = resultsTime.val();
+		console.log("resultsTimeVal: " + resultsTimeVal);
+		resultsTimeSet = true;
+		if (resultsDateSet && resultsTimeSet)
+		{
+			getFutureBlockNum(resultsDateVal, resultsTimeVal);
+			setTimeout(function()
+			{
+				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+				//updateManifest();
+			}, 1000);
+		}
+	});
+
+}
+
+// // update the manifest window
+// function updateManifest(futureBlockNum, numParticipants, numWinners)
+// {
+// 	// Find the hash of the inputs
+// 	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
+// 	console.log("allInputsConcatenated: " + allInputsConcatenated);
+// 	// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
+// 	// console.log(allInputsConcatenatedArray);
+// 	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+// 	console.log("hashOutput: " + hashOutput);
+// 	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+// 	var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+// 	console.log(hexOfHash);
+// 	hashOutputString = hexOfHash.toString()
+// 	console.log("hashOutputString: " + hashOutputString);
+// 	console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
+
+// 	// if (typeof scriptText != "undefined")
+// 	// {
+// 		manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+// 		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+// 		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+// 		+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+// 		// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
+// 		+ "\}");
+// 	// }
+// 	// else
+// 	// {
+// 	// 	manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+// 	// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+// 	// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+// 	// 	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
+// 	// }
+// }
+
 function setFields1(randomKey)
 {
 	console.log("randomKey: " + randomKey);
@@ -49,20 +135,14 @@ function setFields1(randomKey)
 	// numParticipants.css("color", 'gray');
 	var numWinners = $('#numWinners1');
 	// numWinners.css("color", 'gray');
-	var resultsDate = $('#resultsDate1');
-	// resultsDate.css("color", 'gray');
-	var resultsTime = $('#resultsTime1');
+	// var resultsDate = $('#resultsDate1');
+	// // resultsDate.css("color", 'gray');
+	// var resultsTime = $('#resultsTime1');
 	var participantsList = $('#participantList1');
 	// resultsTime.css("color", 'gray');
 	var manifestWindow = $('#manifestWindow1');
 	var submitButton = $('#submitButton1');
 	var scriptText = defaultLotteryScript;
-
-	// create boolean variables ot let us know whether the fields have been set or not
-	// var numParticipantsSet = false;
-	// var numWinnersSet = false;
-	var resultsDateSet = false;
-	var resultsTimeSet = false;
 
 	// numParticipants.val(numParticipantsInitText);
 	// numWinners.val(numWinnersInitText);
@@ -73,44 +153,39 @@ function setFields1(randomKey)
 	numWinnersVal = numWinners.val();
 	participantsListVal = participantsList.val();
 
-	var resultsDateVal;
-	var resultsTimeVal;
-	// resultsDateVal = resultsDate.val();
-	// resultsTimeVal = resultsTime.val();
-	resultsDate.datepicker({
-		onSelect: function(dateText, inst){
-			resultsDateVal = dateText;
-			console.log(resultsDateVal);
-			resultsDateSet = true;
-			if (resultsDateSet && resultsTimeSet)
-			{
-				getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
-				setTimeout(function()
-				{
-					console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-					updateManifest();
-				}, 1000);
-			}
-		},
-	});
+	// var resultsDateVal;
+	// var resultsTimeVal;
+	// resultsDate.datepicker({
+	// 	onSelect: function(dateText, inst){
+	// 		resultsDateVal = dateText;
+	// 		console.log(resultsDateVal);
+	// 		resultsDateSet = true;
+	// 		if (resultsDateSet && resultsTimeSet)
+	// 		{
+	// 			getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
+	// 			setTimeout(function()
+	// 			{
+	// 				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+	// 				updateManifest();
+	// 			}, 1000);
+	// 		}
+	// 	},
+	// });
 
-	resultsTime.timepicker({
-		selectTime: function(){
-			console.log(resultsTime.getVal())
-		},
-	});
+	// resultsTime.timepicker({
+	// 	selectTime: function(){
+	// 		//console.log(resultsTime.getVal());
+	// 		resultsTimeVal = resultsTime.getVal();
+	// });
 
-	var futureBlockNum = {stringVal: ""};
 	var hashOutputString;
 
 	// update the manifest window
 	function updateManifest()
 	{
+		console.log("tabs: " + $('#tabs').tabs("option", "active"));
 		// Find the hash of the inputs
 		var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
-		// console.log("allInputsConcatenated: " + allInputsConcatenated);
-		// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
-		// console.log(allInputsConcatenatedArray);
 		var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
 		// console.log("hashOutput: " + hashOutput);
 		// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
@@ -118,25 +193,13 @@ function setFields1(randomKey)
 		console.log(hexOfHash);
 		hashOutputString = hexOfHash.toString()
 		// console.log("hashOutputString: " + hashOutputString);
-		// console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
-		// console.log("radioButton: " + $('input[name="radio1"]:checked').val());
 
-		// if (typeof scriptText != "undefined")
-		// {
-			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
-			+ "\}");
-		// }
-		// else
-		// {
-		// 	manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-		// 	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
-		// }
+		manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+		+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+		// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
+		+ "\}");
 	}
 
 	updateManifest();
@@ -209,32 +272,32 @@ function setFields1(randomKey)
 			updateManifest();
 			console.log(participantsList.val().split(","));
 		})
-		resultsTime.blur(function(eventObject)
-		{
-		// 	if (resultsTime.val() == '')
-		// 	{
-		// 		resultsTime.val(resultsTimeInitText);
-		// 		resultsTime.css("color", 'gray');
-		// 		resultsTimeSet=false;
-		// 	}
-		// 	else
-		// 	{
-				resultsTimeVal = resultsTime.val();
-				console.log("resultsTimeVal: " + resultsTimeVal);
-				resultsTimeSet = true;
-				if (resultsDateSet && resultsTimeSet)
-				{
-					console.log('here!');
-					getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
-					setTimeout(function()
-					{
-						console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-						updateManifest();
-					}, 1000);
-				}
+		// resultsTime.blur(function(eventObject)
+		// {
+		// // 	if (resultsTime.val() == '')
+		// // 	{
+		// // 		resultsTime.val(resultsTimeInitText);
+		// // 		resultsTime.css("color", 'gray');
+		// // 		resultsTimeSet=false;
+		// // 	}
+		// // 	else
+		// // 	{
+		// 		resultsTimeVal = resultsTime.val();
+		// 		console.log("resultsTimeVal: " + resultsTimeVal);
+		// 		resultsTimeSet = true;
+		// 		if (resultsDateSet && resultsTimeSet)
+		// 		{
+		// 			console.log('here!');
+		// 			getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
+		// 			setTimeout(function()
+		// 			{
+		// 				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+		// 				updateManifest();
+		// 			}, 1000);
+		// 		}
 
-		// 	}
-		});
+		// // 	}
+		// });
 	}
 	setFieldInputBehavior();
 
@@ -243,7 +306,6 @@ function setFields1(randomKey)
 		if (resultsDateSet && resultsTimeSet)
 		{
 			event.preventDefault();
-			// var manifestJson = { futureBlockNum :  }
 			var namesList = participantsList.val();
 			if (namesList !== "")
 			{
@@ -510,7 +572,7 @@ function setFields2(randomKey)
 	});
 }
 
-function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
+function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 {
 	// var resultsDate = $('#resultsDate').val();
 	// var resultsTime = $('#resultsTime').val();
@@ -541,9 +603,9 @@ function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
 			console.log("nextRetargetBlock: " + nextRetargetBlock);
 
 			// find the difference between the current time and specified time
-			var currentDate = new Date()
-			var currentDateMs = Date.parse(currentDate)
-			var futureDateMs = Date.parse(resultsDateVal + " " + resultsTimeValFixed + " EDT")
+			var currentDate = new Date();
+			var currentDateMs = Date.parse(currentDate);
+			var futureDateMs = Date.parse(resultsDateVal + " " + resultsTimeValFixed + " EDT");
 
 			console.log("currentDateMs: " + currentDateMs);
 			// console.log(Date.parse("October 5 2014 1:35 AM"));
@@ -556,20 +618,21 @@ function getFutureBlockNum(futureBlockNumVar, resultsDateVal, resultsTimeVal)
 			console.log("difference (minutes): " + differenceMinutes);
 			console.log("difference (blocks): " + differenceBlocks);
 
-			var futureBlockNum = latestblock + differenceBlocks;
-			console.log("future block number: " + futureBlockNum);
+			var futureBlockNumber = latestblock + differenceBlocks;
+			console.log("future block number: " + futureBlockNumber);
 
-			futureBlockNumVar.stringVal = futureBlockNum.toString();
+			futureBlockNum.stringVal = futureBlockNumber.toString();
 
-			if (futureBlockNum <= nextRetargetBlock)
+			if (futureBlockNumber <= nextRetargetBlock)
 			{
 				console.log("futureblock <= retargetblock");
 			}
 			else
 			{
-				diff = futureBlockNum - nextRetargetBlock;
+				diff = futureBlockNumber - nextRetargetBlock;
 				console.log("total retargets till this time: " + (1 + Math.floor(diff/2016)));
 			}
+			$('#futureBlockNumDisplay').text("Future block num: " + futureBlockNumber);
 		}).fail(function(retargetTextStatus, error)
 		{
 			console.log("Error: " + textStatus + " " + error);
@@ -589,11 +652,14 @@ function initJQueryUI()
 	$('#radio3').buttonset();
 }
 
+var randomKey;
+
 $(document).ready(function()
 {
 	initJQueryUI();
 	$('#scriptInput3').change(handleFileSelect);
-	var randomKey = sjcl.random.randomWords(4);
+	randomKey = sjcl.random.randomWords(4);
+	setDateTimeBehavior();
 	setFields1(randomKey);
 	setFields2(randomKey);
 });

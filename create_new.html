@@ -22,28 +22,30 @@
 		<p>
 			Create a new lottery!
 		</p>
+	Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
+	Time to make results available: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input"><br>
+		<p id="futureBlockNumDisplay"></p>
 	</div>
 
 	<div id="tabs">
 		<ul>
-		    <li><a href="#fragment-1">Default Lottery</a></li>
+		    <li><a href="#defaultTab">Default Lottery</a></li>
 		    <li><a href="#fragment-2">Weighted Lottery</a></li>
-		    <li><a href="#fragment-3">Three</a></li>
+		    <li><a href="#orderingTab">Random Ordering</a></li>
+		    <li><a href="#randomTab">Random Number</a></li>
+		    <li><a href="#customTab">Custom</a></li>
 		</ul>
 
-		<div id="fragment-1">
-			<p id="lotteryDescription1">In this type of lottery, each person is equally likely to win. The default format is with numerical entries, but you can name the entries below.</p>
-			<form id ="createLotteryForm1">
-				Number of participants: <input type="text" name="numParticipants1" id="numParticipants1"><br>
+		<div id="defaultTab">
+			<p id="lotteryDescriptionDefault">In this type of lottery, each person is equally likely to win. The default format is with numerical entries, but you can name the entries below.</p>
+			<form id ="createLotteryFormDefault">
+				Number of participants: <input type="text" name="numParticipantsDefault" id="numParticipants1"><br>
 				Number of winners: <input type="text" name="numWinners1" id="numWinners1"><br>
-				Date to make results available: <input type="text" name="resultsDate1" id="resultsDate1"><br>
-				Time to make results available: <input type="text" name="resultsTime1" id="resultsTime1" class="ui-timepicker-input"><br>
 				Name participants (write the names separated by commas:) <input type="text" name="participantList1" id="participantList1"><br><br>
 				<div id="radio1">
 				    Can entries win multiple times?: <input type="radio" id="radio11" name="radio1" value="yes"><label for="radio11">Yes</label>
 				    <input type="radio" id="radio12" name="radio1" checked="checked" value="no"><label for="radio12">No</label>
 				</div>
-				<div id="fileInformation1"></div>
 				<div id="manifestWindow1" class="manifestWindow"></div>
 			</form>
 			<button type="button" id="submitButton1">Submit the manifest</button>
@@ -54,35 +56,39 @@
 			<form id ="createLotteryForm2">
 				Number of participants: <input type="text" name="numParticipants2" id="numParticipants2"><br>
 				Number of winners: <input type="text" name="numWinners2" id="numWinners2"><br>
-				Date to make results available: <input type="text" name="resultsDate2" id="resultsDate2"><br>
-				Time to make results available: <input type="text" name="resultsTime2" id="resultsTime2" class="ui-timepicker-input"><br>
 				Add participants (write the names separated by commas:) <input type="text" name="participantList2" id="participantList2"><br><br>
 				<div id="radio2">
 				    Can entries win multiple times?: <input type="radio" id="radio21" name="radio2"><label for="radio21">Yes</label>
 				    <input type="radio" id="radio22" name="radio2" checked="checked"><label for="radio22">No</label>
 				</div>
-				<div id="fileInformation2"></div>
 				<div id="manifestWindow2" class="manifestWindow"></div>
 			</form>
 			<button type="button" id="submitButton2">Submit the manifest</button>
 		</div>
-		<div id="fragment-3">
-			<p id="lotteryDescription3">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Below is an example script. Please allow the script to take three variables: randomBits, numParticipants, numWinners. After calculating your results, please return an array containing the winners. </p>
+
+		<div id="orderingTab">
+			<p id="lotteryDescription3">In this type of lottery, you can specify the probability of each entry winning.</p>
 			<form id ="createLotteryForm3">
 				Number of participants: <input type="text" name="numParticipants3" id="numParticipants3"><br>
-				Number of winners: <input type="text" name="numWinners3" id="numWinners3"><br>
-				Date to make results available: <input type="text" name="resultsDate3" id="resultsDate3"><br>
-				Time to make results available: <input type="text" name="resultsTime3" id="resultsTime3" class="ui-timepicker-input"><br>
-				Add participants (write the names separated by commas:) <input type="text" name="participantList3" id="participantList3"><br>
-				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script3" id="scriptInput3"><br><br>
-				<div id="radio3">
-				    Can entries win multiple times?: <input type="radio" id="radio31" name="radio3"><label for="radio31">Yes</label>
-				    <input type="radio" id="radio32" name="radio3" checked="checked"><label for="radio32">No</label>
-				</div>
-				<div id="fileInformation3"></div>
 				<div id="manifestWindow3" class="manifestWindow"></div>
 			</form>
 			<button type="button" id="submitButton3">Submit the manifest</button>
+		</div>
+
+		<div id="randomTab">
+			<p id="lotteryDescription4">In this type of lottery, you can specify the probability of each entry winning.</p>
+			<div id="manifestWindow4" class="manifestWindow"></div>
+			<button type="button" id="submitButton4">Submit the manifest</button>
+		</div>
+
+		<div id="customTab">
+			<p id="lotteryDescriptionCustom">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Below is an example script. Please allow the script to take three variables: randomBits, numParticipants, numWinners. After calculating your results, please return an array containing the winners. </p>
+			<form id ="createLotteryFormCustom">
+				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script" id="scriptInput"><br><br>
+				<div id="fileInformationCustom"></div>
+				<div id="manifestWindowCustom" class="manifestWindow"></div>
+			</form>
+			<button type="button" id="submitButtonCustom">Submit the manifest</button>
 		</div>
 	</div>
 </body>
