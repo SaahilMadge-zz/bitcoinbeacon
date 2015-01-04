@@ -1,6 +1,8 @@
-var latestBlockURL = "http://blockchain.info/latestblock";
+var latestBlockURL = "https://blockchain.info/latestblock";
 var otherURL = "https://blockchain.info/q/getblockcount";
 var blockExplorerURL = "http://blockexplorer.com/q/getblockcount";
+var blockcypherMainURL = "https://api.blockcypher.com/v1/btc/main";
+var blockBaseURL = "https://api.blockcypher.com/v1/btc/main/blocks/";
 
 function printFileInfo(file)
 {
@@ -446,16 +448,31 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 	console.log("resultsTimeValFixed: " + resultsTimeValFixed);
 
 	// get the latest block #
+	// $.ajax(
+	// {
+	// 	type: 'GET',
+	// 	dataType: "text",
+	// 	url: otherURL,
+	// }).done(function(text)
+	// {
+	// 	//console.log("API: " + json);
+	// 	// console.log(data)
+	// 	latestblockNum = parseInt(text);
+	// 	console.log("latestBlockNum: " + text);
+	// 	console.log(blockchainTestURL + latestblockNum);
 	$.ajax(
 	{
-		dataType: "text",
-		url: otherURL,
-	}).done(function(text)
+		type: 'GET',
+		dataType: 'json',
+		url: blockcypherMainURL,
+		crossDomain:true,
+		contentType: 'text/plain',
+	}).done(function(json)
 	{
-		// console.log(data)
-		latestblock = parseInt(text);
-		console.log("latestBlock: " + text);
-
+		console.log("latest block: " + json.height);
+		console.log("latest block time: " + json.time);
+		console.log("parsed time: " + Date.parse(json.time));
+		var latestblock = json.height;
 		$.ajax(
 		{
 			dataType: "text",
@@ -465,37 +482,58 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 			nextRetargetBlock = parseInt(retargetText);
 			console.log("nextRetargetBlock: " + nextRetargetBlock);
 
-			// find the difference between the current time and specified time
-			var currentDate = new Date();
-			var currentDateMs = Date.parse(currentDate);
-			var futureDateMs = Date.parse(resultsDateVal + " " + resultsTimeValFixed + " EDT");
-
-			console.log("currentDateMs: " + currentDateMs);
-			// console.log(Date.parse("October 5 2014 1:35 AM"));
-			console.log("futureDateMs:  " + futureDateMs);
-
-			var difference = futureDateMs - currentDateMs;
-			var differenceMinutes = difference / 60000;
-			var differenceBlocks = Math.ceil(differenceMinutes / 10);
-			console.log("difference (ms): " + difference);
-			console.log("difference (minutes): " + differenceMinutes);
-			console.log("difference (blocks): " + differenceBlocks);
-
-			var futureBlockNumber = latestblock + differenceBlocks;
-			console.log("future block number: " + futureBlockNumber);
-
-			futureBlockNum.stringVal = futureBlockNumber.toString();
-
-			if (futureBlockNumber <= nextRetargetBlock)
+			$.ajax(
 			{
-				console.log("futureblock <= retargetblock");
-			}
-			else
+				type: 'GET',
+				dataType: 'json',
+				// this URL gets the time of the block 4 cycles ago
+				url: blockBaseURL + (nextRetargetBlock - 10080),
+				crossDomain:true,
+				contentType: 'text/plain',
+			}).done(function(oldBlockJSON)
 			{
-				diff = futureBlockNumber - nextRetargetBlock;
-				console.log("total retargets till this time: " + (1 + Math.floor(diff/2016)));
-			}
-			$('#futureBlockNumDisplay').text("Future block num: " + futureBlockNumber);
+				var oldBlockTime = oldBlockJSON.time;
+				// find the difference between the current time and specified time
+				//var currentDate = new Date();
+				//var currentDateMs = Date.parse(currentDate);
+				var futureDateMs = Date.parse(resultsDateVal + " " + resultsTimeValFixed + " EDT");
+				var currentBlockDate = Math.ceil(Date.parse(json.time));
+				var oldBlockDate = Math.ceil(Date.parse(oldBlockTime));
+
+				console.log("currentDateMs: " + currentBlockDate);
+				console.log("oldBlockDate: " + oldBlockDate);
+				// console.log(Date.parse("October 5 2014 1:35 AM"));
+				console.log("futureDateMs:  " + futureDateMs);
+
+				var difference = futureDateMs - currentBlockDate;
+				var differenceMinutes = difference / 60000;
+				console.log("difference (ms): " + difference);
+				console.log("difference (minutes): " + differenceMinutes);
+
+				// calculate total time over the past 4 cycles and current cycle
+				var totalTimeMinutes = (currentBlockDate - oldBlockDate) / 60000;
+				var totalTimeAverage = totalTimeMinutes / (8064 + (json.height + 2016 - nextRetargetBlock));
+				console.log(totalTimeAverage);
+
+				var differenceBlocks = Math.ceil(differenceMinutes / totalTimeAverage);
+				console.log("difference (blocks): " + differenceBlocks);
+
+				var futureBlockNumber = latestblock + differenceBlocks;
+				console.log("future block number: " + futureBlockNumber);
+
+				futureBlockNum.stringVal = futureBlockNumber.toString();
+
+				// if (futureBlockNumber <= nextRetargetBlock)
+				// {
+				// 	console.log("futureblock <= retargetblock");
+				// }
+				// else
+				// {
+				// 	diff = futureBlockNumber - nextRetargetBlock;
+				// 	console.log("total retargets till this time: " + (1 + Math.floor(diff/2016)));
+				// }
+				$('#futureBlockNumDisplay').text("Future block num: " + futureBlockNumber);
+			})
 		}).fail(function(retargetTextStatus, error)
 		{
 			console.log("Error: " + textStatus + " " + error);
