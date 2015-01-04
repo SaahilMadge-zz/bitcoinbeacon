@@ -39,16 +39,16 @@
 		<div id="defaultTab">
 			<p id="lotteryDescriptionDefault">In this type of lottery, each person is equally likely to win. The default format is with numerical entries, but you can name the entries below.</p>
 			<form id ="createLotteryFormDefault">
-				Number of participants: <input type="text" name="numParticipantsDefault" id="numParticipants1"><br>
-				Number of winners: <input type="text" name="numWinners1" id="numWinners1"><br>
-				Name participants (write the names separated by commas:) <input type="text" name="participantList1" id="participantList1"><br><br>
-				<div id="radio1">
-				    Can entries win multiple times?: <input type="radio" id="radio11" name="radio1" value="yes"><label for="radio11">Yes</label>
-				    <input type="radio" id="radio12" name="radio1" checked="checked" value="no"><label for="radio12">No</label>
+				Number of participants: <input type="text" name="numParticipantsDefault" id="numParticipantsDefault"><br>
+				Number of winners: <input type="text" name="numWinnersDefault" id="numWinnersDefault"><br>
+				Name participants (write the names separated by commas:) <input type="text" name="participantListDefault" id="participantListDefault"><br><br>
+				<div id="radioDefault">
+				    Can entries win multiple times?: <input type="radio" id="radioDefault1" name="radioDefault1" value="yes"><label for="radioDefault1">Yes</label>
+				    <input type="radio" id="radioDefault2" name="radioDefault1" checked="checked" value="no"><label for="radioDefault2">No</label>
 				</div>
-				<div id="manifestWindow1" class="manifestWindow"></div>
+				<div id="manifestWindowDefault" class="manifestWindow"></div>
 			</form>
-			<button type="button" id="submitButton1">Submit the manifest</button>
+			<button type="button" id="submitButtonDefault">Submit the manifest</button>
 		</div>
 
 		<div id="fragment-2">
@@ -67,24 +67,25 @@
 		</div>
 
 		<div id="orderingTab">
-			<p id="lotteryDescription3">In this type of lottery, you can specify the probability of each entry winning.</p>
-			<form id ="createLotteryForm3">
-				Number of participants: <input type="text" name="numParticipants3" id="numParticipants3"><br>
-				<div id="manifestWindow3" class="manifestWindow"></div>
+			<p id="lotteryDescriptionOrdering">In this type of lottery, you can specify the probability of each entry winning.</p>
+			<form id ="createLotteryFormOrdering">
+				Number of participants: <input type="text" name="numParticipantsOrdering" id="numParticipantsOrdering"><br>
+				Name participants (write the names separated by commas:) <input type="text" name="participantListOrdering" id="participantListOrdering"><br><br>
+				<div id="manifestWindowOrdering" class="manifestWindow"></div>
 			</form>
-			<button type="button" id="submitButton3">Submit the manifest</button>
+			<button type="button" id="submitButtonOrdering">Submit the manifest</button>
 		</div>
 
 		<div id="randomTab">
-			<p id="lotteryDescription4">In this type of lottery, you can specify the probability of each entry winning.</p>
-			<div id="manifestWindow4" class="manifestWindow"></div>
-			<button type="button" id="submitButton4">Submit the manifest</button>
+			<p id="lotteryDescriptionRandom">In this type of lottery, you can specify the probability of each entry winning.</p>
+			<div id="manifestWindowRandom" class="manifestWindow"></div>
+			<button type="button" id="submitButtonRandom">Submit the manifest</button>
 		</div>
 
 		<div id="customTab">
 			<p id="lotteryDescriptionCustom">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Below is an example script. Please allow the script to take three variables: randomBits, numParticipants, numWinners. After calculating your results, please return an array containing the winners. </p>
 			<form id ="createLotteryFormCustom">
-				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script" id="scriptInput"><br><br>
+				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script" id="scriptInputCustom"><br><br>
 				<div id="fileInformationCustom"></div>
 				<div id="manifestWindowCustom" class="manifestWindow"></div>
 			</form>

@@ -1,37 +1,38 @@
-function extractRandomness(blockNumber, randomKeyBitArray)
-{
-	var blockBaseURL = "https://api.blockcypher.com/v1/btc/main/blocks/";
-	console.log('url: ' + blockBaseURL + blockNumber);
+// function extractRandomness(blockNumber, randomKeyBitArray)
+// {
+// 	var blockBaseURL = "https://api.blockcypher.com/v1/btc/main/blocks/";
+// 	console.log('url: ' + blockBaseURL + blockNumber);
 
-	$.ajax(
-	{
-		type: 'GET',
-		dataType: 'json',
+// 	// get specified block
+// 	$.ajax(
+// 	{
+// 		type: 'GET',
+// 		dataType: 'json',
 
-		// for testing, use a hardcoded block
-		// url: blockBaseURL + blockNumber,
-		url: blockBaseURL + '329500',
-		crossDomain:true,
-		contentType: 'text/plain'
-	}).done(function(json1)
-	{
-		latestblock = json1;
-		// console.log(json);
-		var blockHash1 = json1.hash;
-		console.log('blockHash: ' + blockHash1);
-		var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
-		var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
-		console.log('hmacOut32: ' + randomBits);
-		console.log('hmacOut32Length: ' + sjcl.bitArray.bitLength(randomBits));
+// 		// for testing, use a hardcoded block
+// 		// url: blockBaseURL + blockNumber,
+// 		url: blockBaseURL + '329500',
+// 		crossDomain:true,
+// 		contentType: 'text/plain'
+// 	}).done(function(json1)
+// 	{
+// 		latestblock = json1;
+// 		// console.log(json);
+// 		var blockHash1 = json1.hash;
+// 		console.log('blockHash: ' + blockHash1);
+// 		var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
+// 		var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
+// 		console.log('hmacOut32: ' + randomBits);
+// 		console.log('hmacOut32Length: ' + sjcl.bitArray.bitLength(randomBits));
 
-		// selectLotteryWinnersDefault(randomBits, numParticipants, numWinners);
-		return randomBits;
-	}).fail(function(textStatus, error)
-	{
-		console.log('Error: ' + textStatus + ' ' + error);
-		return null;
-	});
-}
+// 		// selectLotteryWinnersDefault(randomBits, numParticipants, numWinners);
+// 		return randomBits;
+// 	}).fail(function(textStatus, error)
+// 	{
+// 		console.log('Error: ' + textStatus + ' ' + error);
+// 		return null;
+// 	});
+// }
 
 // function selectLotteryWinnersDefault(randomBits, numParticipants, numWinners)
 // {
@@ -126,6 +127,7 @@ function processLottery()
 		var blockBaseURL = "https://api.blockcypher.com/v1/btc/main/blocks/";
 		console.log('url: ' + blockBaseURL + blockNumber);
 
+		// 1st block
 		$.ajax(
 		{
 			type: 'GET',
@@ -136,58 +138,137 @@ function processLottery()
 			url: blockBaseURL + '329500',
 			crossDomain:true,
 			contentType: 'text/plain'
-		}).done(function(json)
+		}).done(function(json1)
 		{
-			latestblock = json;
-			var blockHash = json.hash;
-			console.log('blockHash: ' + blockHash);
-			var hmacOut = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash);
-			var randomBits = sjcl.bitArray.clamp(hmacOut, 32);
-			console.log('hmacOut32: ' + randomBits);
-			console.log('hmacOut32Length: ' + sjcl.bitArray.bitLength(randomBits));
+			var blockHash1 = json1.hash;
+			console.log('blockHash1: ' + blockHash1);
+			//console.log('randomKeyBitArray' + randomKeyBitArray);
+			//console.log('is there a difference: ' + sjcl.codec.hex.toBits(randomKeyBitArray.toString(16)));
+			var hmacOut1 = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash1);
+			var randomBits1 = sjcl.bitArray.clamp(hmacOut1, 32);
+			console.log('hmacOut32First: ' + randomBits1);
+			// console.log('hmacOut32Length: ' + sjcl.bitArray.bitLength(randomBits));
 
-			// selectLotteryWinnersDefault(randomBits, numParticipants, numWinners);
-			// return randomBits;
-
-			// var randomBits = extractRandomness(blockNumber, randomKeyBitArray);
-			console.log("randomBitsFirst: " + randomBits);
-			// while (randomBits === null)
-			// {
-			// 	setTimeout(function()
-			// 	{
-			// 		randomBits = extractRandomness(blockNumber, randomKeyBitArray);
-			// 	}, 2000);
-			// }
-
-			var scriptText;
-			if ($('#scriptText').length)
+			// 2nd block
+			$.ajax(
 			{
-				scriptText = $('#scriptText').html().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-			}
-			// console.log("scriptText: " + scriptText);
-			console.log("randomBitsOutside: " + randomBits);
-			var tuples = eval(scriptText);
-			console.log("tuples.length: " + tuples.length);
-			console.log("tuples: " + tuples);
+				type: 'GET',
+				dataType: 'json',
 
-			var winnersPane = $('#winnersPane');
-			winnersPane.html("<b>Winners:</b> ");
-			for (var i = 0; i < numWinners; i++)
+				// for testing, use a hardcoded block
+				// url: blockBaseURL + (blockNumber - 1),
+				url: blockBaseURL + '329499',
+				crossDomain:true,
+				contentType: 'text/plain'
+			}).done(function(json2)
 			{
-				if (tuples[i][0] < participantsList.length)
-				{
-					winnersPane.append("" + participantsList[tuples[i][0]]);
-				}
-				else
-				{
-					winnersPane.append("" + tuples[i][0]);
-				}
+				var blockHash2 = json2.hash;
+				console.log('blockHash2: ' + blockHash2);
+				var hmacOut2 = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash2);
+				var randomBits2 = sjcl.bitArray.clamp(hmacOut2, 32);
+				console.log('hmacOut32Second: ' + randomBits2);
 
-				if (i < numWinners - 1)
+				// 3rd block
+				$.ajax(
 				{
-					winnersPane.append(", ");
-				}
-			}
+					type: 'GET',
+					dataType: 'json',
+
+					// for testing, use a hardcoded block
+					// url: blockBaseURL + (blockNumber - 2),
+					url: blockBaseURL + '329498',
+					crossDomain:true,
+					contentType: 'text/plain'
+				}).done(function(json3)
+				{
+					var blockHash3 = json3.hash;
+					console.log('blockHash3: ' + blockHash3);
+					var hmacOut3 = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash3);
+					var randomBits3 = sjcl.bitArray.clamp(hmacOut3, 32);
+					console.log('hmacOut32Third: ' + randomBits3);
+
+					// 4th block
+					$.ajax(
+					{
+						type: 'GET',
+						dataType: 'json',
+
+						// for testing, use a hardcoded block
+						// url: blockBaseURL + (blockNumber - 3),
+						url: blockBaseURL + '329497',
+						crossDomain:true,
+						contentType: 'text/plain'
+					}).done(function(json4)
+					{
+						var blockHash4 = json4.hash;
+						console.log('blockHash4: ' + blockHash4);
+						var hmacOut4 = new sjcl.misc.hmac(randomKeyBitArray).encrypt(blockHash4);
+						var randomBits4 = sjcl.bitArray.clamp(hmacOut4, 32);
+						console.log('hmacOut32Fourth: ' + randomBits4);
+
+						var extractedRandomBits = sjcl.bitArray.concat(randomBits1, sjcl.bitArray.concat(randomBits2, sjcl.bitArray.concat(randomBits3, randomBits4)));
+
+						// selectLotteryWinnersDefault(randomBits, numParticipants, numWinners);
+						// return randomBits;
+
+						// var randomBits = extractRandomness(blockNumber, randomKeyBitArray);
+						console.log("128 random bits: " + extractedRandomBits);
+						console.log("128 bits' length: " + sjcl.bitArray.bitLength(extractedRandomBits));
+						// while (randomBits === null)
+						// {
+						// 	setTimeout(function()
+						// 	{
+						// 		randomBits = extractRandomness(blockNumber, randomKeyBitArray);
+						// 	}, 2000);
+						// }
+
+						var scriptText;
+						if ($('#scriptText').length)
+						{
+							scriptText = $('#scriptText').html().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+						}
+						// console.log("scriptText: " + scriptText);
+						// console.log("randomBitsOutside: " + randomBits);
+						var tuples = eval(scriptText);
+						console.log("tuples.length: " + tuples.length);
+						console.log("tuples: " + tuples);
+
+						var winnersPane = $('#winnersPane');
+						winnersPane.html("<b>Winners:</b> ");
+						for (var i = 0; i < numWinners; i++)
+						{
+							if (tuples[i][0] < participantsList.length)
+							{
+								winnersPane.append("" + participantsList[tuples[i][0]]);
+							}
+							else
+							{
+								winnersPane.append("" + tuples[i][0]);
+							}
+
+							if (i < numWinners - 1)
+							{
+								winnersPane.append(", ");
+							}
+						}
+
+					}).fail(function(textStatus, error)
+					{
+						console.log('Error: ' + textStatus + ' ' + error);
+						return null;
+					});
+
+				}).fail(function(textStatus, error)
+				{
+					console.log('Error: ' + textStatus + ' ' + error);
+					return null;
+				});
+
+			}).fail(function(textStatus, error)
+			{
+				console.log('Error: ' + textStatus + ' ' + error);
+				return null;
+			});
 		}).fail(function(textStatus, error)
 		{
 			console.log('Error: ' + textStatus + ' ' + error);

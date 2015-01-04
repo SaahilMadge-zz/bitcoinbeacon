@@ -5,9 +5,10 @@ var blockExplorerURL = "http://blockexplorer.com/q/getblockcount";
 function printFileInfo(file)
 {
 	console.log("printing file info");
-	$('#fileInformation1').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
-	$('#fileInformation2').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
+	$('#fileInformationCustom').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
 }
+
+var scriptText;
 
 function handleFileSelect(evt)
 {
@@ -19,7 +20,8 @@ function handleFileSelect(evt)
 		printFileInfo(file);
 	}
 	readFile();
-	console.log("scriptText Now: " + scriptText);
+	console.log("scriptText Now: " + scriptTextCustom);
+	updateManifestCustomTab(randomKey, scriptTextCustom);
 }
 
 function readFile()
@@ -27,7 +29,7 @@ function readFile()
 	var reader = new FileReader();
 	reader.onload = function()
 	{
-		scriptText = reader.result;
+		scriptTextCustom = reader.result;
 		console.log(scriptText);
 		console.log("here!");
 	}
@@ -35,17 +37,29 @@ function readFile()
 }
 
 // create boolean variables to let us know whether the fields have been set or not
-var resultsDateSet = false;
-var resultsTimeSet = false;
 var futureBlockNum = {stringVal: ""};
 
-function setDateTimeBehavior()
+function getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal, randomKey)
+{
+	getFutureBlockNum(resultsDateVal, resultsTimeVal);
+	setTimeout(function()
+	{
+		console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+		updateManifests(randomKey);
+	}, 1000);
+}
+
+function setDateTimeBehavior(randomKey)
 {
 	var resultsDate = $('#resultsDate');
 	var resultsTime = $('#resultsTime');
 
 	var resultsDateVal;
 	var resultsTimeVal;
+
+	var resultsDateSet = false;
+	var resultsTimeSet = false;
+
 	resultsDate.datepicker({
 		onSelect: function(dateText, inst){
 			resultsDateVal = dateText;
@@ -53,12 +67,7 @@ function setDateTimeBehavior()
 			resultsDateSet = true;
 			if (resultsDateSet && resultsTimeSet)
 			{
-				getFutureBlockNum(resultsDateVal, resultsTimeVal);
-				setTimeout(function()
-				{
-					console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-					// updateManifest();
-				}, 1000);
+				getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal);
 			}
 		},
 	});
@@ -71,17 +80,15 @@ function setDateTimeBehavior()
 
 	resultsTime.blur(function(eventObject)
 	{
-		resultsTimeVal = resultsTime.val();
-		console.log("resultsTimeVal: " + resultsTimeVal);
-		resultsTimeSet = true;
-		if (resultsDateSet && resultsTimeSet)
+		console.log(resultsTime.val());
+		if(resultsTime.val() !== "")
 		{
-			getFutureBlockNum(resultsDateVal, resultsTimeVal);
-			setTimeout(function()
+			resultsTimeVal = resultsTime.val();
+			resultsTimeSet = true;
+			if (resultsDateSet && resultsTimeSet)
 			{
-				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-				//updateManifest();
-			}, 1000);
+				getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal);
+			}
 		}
 	});
 
@@ -122,188 +129,171 @@ function setDateTimeBehavior()
 // 	// }
 // }
 
-function setFields1(randomKey)
+function getDefaultTabHash(randomKey)
+{
+	var numParticipants = $('#numParticipantsDefault');
+	var numWinners = $('#numWinnersDefault');
+	var participantsList = $('#participantListDefault');
+
+	// Find the hash of the inputs
+	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
+	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+	// console.log("hashOutput: " + hashOutput);
+	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+	var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+	//console.log(hexOfHash);
+	hashOutputString = hexOfHash.toString()
+	console.log("hashOutputString: " + hashOutputString);
+	return hashOutputString;
+}
+
+function getOrderingTabHash(randomKey)
+{
+	var numParticipants = $('#numParticipantsDefault');
+	var participantsList = $('#participantListDefault');
+
+	// Find the hash of the inputs
+	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + randomKey; 
+	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+	// console.log("hashOutput: " + hashOutput);
+	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+	var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+	//console.log(hexOfHash);
+	hashOutputString = hexOfHash.toString()
+	console.log("hashOutputString: " + hashOutputString);
+	return hashOutputString;
+}
+
+function getRandomTabHash(randomKey)
+{
+	// Find the hash of the inputs
+	var allInputsConcatenated = futureBlockNum.stringVal + "" + randomKey; 
+	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+	// console.log("hashOutput: " + hashOutput);
+	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+	var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+	// console.log(hexOfHash);
+	hashOutputString = hexOfHash.toString()
+	console.log("hashOutputString: " + hashOutputString);
+	return hashOutputString;
+}
+
+function getCustomTabHash(randomKey, scriptTextCustom)
+{
+	if (scriptTextCustom == undefined) scriptTextCustom = "";
+
+	console.log("scriptText: " + scriptTextCustom);
+	// Find the hash of the inputs
+	var allInputsConcatenated = futureBlockNum.stringVal + "" + scriptTextCustom + randomKey; 
+	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
+	// console.log("hashOutput: " + hashOutput);
+	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
+	var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
+	// console.log(hexOfHash);
+	hashOutputString = hexOfHash.toString()
+	console.log("hashOutputString: " + hashOutputString);
+	return hashOutputString;
+}
+
+function updateManifestDefaultTab(randomKey)
+{
+	var numParticipants = $('#numParticipantsDefault');
+	var numWinners = $('#numWinnersDefault');
+	var participantsList = $('#participantListDefault');
+	var manifestWindow = $('#manifestWindowDefault');
+	var hashOutputString = getDefaultTabHash(randomKey);
+
+	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"script\": default script<br>"
+	+ "\}");
+}
+
+function updateManifestOrderingTab(randomKey)
+{
+	var numParticipants = $('#numParticipantsOrdering');
+	var participantsList = $('#participantListOrdering');
+	var manifestWindow = $('#manifestWindowOrdering');
+	var hashOutputString = getOrderingTabHash(randomKey);
+
+	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
+	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
+	+ "<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": ordering script <br>"
+	+ "\}");
+}
+
+function updateManifestRandomTab(randomKey)
+{
+	var manifestWindow = $('#manifestWindowRandom');
+	var hashOutputString = getRandomTabHash(randomKey);
+
+	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal
+	+ "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": random generation script <br>"
+	+ "\}");
+}
+
+function updateManifestCustomTab(randomKey, scriptText)
+{
+	var manifestWindow = $('#manifestWindowCustom');
+	var hashOutputString = getCustomTabHash(randomKey, scriptText);
+
+	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal
+	+ "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>"
+	+ "\}");
+}
+
+function updateManifests(randomKey)
+{
+	updateManifestDefaultTab(randomKey);
+	updateManifestOrderingTab(randomKey);
+	updateManifestRandomTab(randomKey);
+	updateManifestCustomTab(randomKey);
+}
+
+function setFieldsDefaultTab(randomKey)
 {
 	console.log("randomKey: " + randomKey);
-	// initialize the field values, make them gray
-	// var numParticipantsInitText = "35";
-	// var numWinnersInitText = "2";
-	// var resultsDateInitText = "10/5/14";
-	// var resultsTimeInitText = "4:50 PM";
-
-	var numParticipants = $('#numParticipants1');
-	// numParticipants.css("color", 'gray');
-	var numWinners = $('#numWinners1');
-	// numWinners.css("color", 'gray');
-	// var resultsDate = $('#resultsDate1');
-	// // resultsDate.css("color", 'gray');
-	// var resultsTime = $('#resultsTime1');
-	var participantsList = $('#participantList1');
-	// resultsTime.css("color", 'gray');
-	var manifestWindow = $('#manifestWindow1');
-	var submitButton = $('#submitButton1');
-	var scriptText = defaultLotteryScript;
-
-	// numParticipants.val(numParticipantsInitText);
-	// numWinners.val(numWinnersInitText);
-	// resultsDate.val(resultsDateInitText);
-	// resultsTime.val(resultsTimeInitText);
-
-	numParticipantsVal = numParticipants.val();
-	numWinnersVal = numWinners.val();
-	participantsListVal = participantsList.val();
-
-	// var resultsDateVal;
-	// var resultsTimeVal;
-	// resultsDate.datepicker({
-	// 	onSelect: function(dateText, inst){
-	// 		resultsDateVal = dateText;
-	// 		console.log(resultsDateVal);
-	// 		resultsDateSet = true;
-	// 		if (resultsDateSet && resultsTimeSet)
-	// 		{
-	// 			getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
-	// 			setTimeout(function()
-	// 			{
-	// 				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-	// 				updateManifest();
-	// 			}, 1000);
-	// 		}
-	// 	},
-	// });
-
-	// resultsTime.timepicker({
-	// 	selectTime: function(){
-	// 		//console.log(resultsTime.getVal());
-	// 		resultsTimeVal = resultsTime.getVal();
-	// });
-
-	var hashOutputString;
-
-	// update the manifest window
-	function updateManifest()
-	{
-		console.log("tabs: " + $('#tabs').tabs("option", "active"));
-		// Find the hash of the inputs
-		var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
-		var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
-		// console.log("hashOutput: " + hashOutput);
-		// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
-		var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
-		console.log(hexOfHash);
-		hashOutputString = hexOfHash.toString()
-		// console.log("hashOutputString: " + hashOutputString);
-
-		manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-		+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-		+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-		// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
-		+ "\}");
-	}
-
-	updateManifest();
+	var numParticipants = $('#numParticipantsDefault');
+	var numWinners = $('#numWinnersDefault');
+	var participantsList = $('#participantListDefault');
 
 	function setFieldInputBehavior()
 	{
-		// numParticipants.focus(function(eventObject) {
-		// 	if (!numParticipantsSet)
-		// 	{
-		// 		numParticipants.val('');
-		// 		numParticipants.css("color", 'black');
-		// 	}
-		// });
-		// numWinners.focus(function(eventObject) {
-		// 	if (!numWinnersSet)
-		// 	{
-		// 		numWinners.val('');
-		// 		numWinners.css("color", 'black');
-		// 	}
-		// });
-		// resultsDate.focus(function(eventObject)
-		// {
-		// 	if (!resultsDateSet)
-		// 	{
-		// 		resultsDate.val('');
-		// 		resultsDate.css("color", 'black');
-		// 	}
-		// });
-		// resultsTime.focus(function(eventObject)
-		// {
-		// 	if (!resultsTimeSet)
-		// 	{
-		// 		resultsTime.val('');
-		// 		resultsTime.css("color", "black");
-		// 	}
-		// });
-
 		numParticipants.blur(function(eventObject) 
 		{
-			if (numParticipants.val() == '')
+			if (numParticipants.val() != '')
 			{
-				// numParticipants.val(numParticipantsInitText);
-				// numParticipants.css("color", "gray");
-				// numParticipantsSet=false;
-			}
-			else
-			{
-				// numParticipantsSet = true;
-				// numParticipantsVal = numParticipants.val();
-				updateManifest();
+				updateManifestDefaultTab(randomKey);
+				updateManifestOrderingTab(randomKey);
 			}
 		});
 		numWinners.blur(function(eventObject) 
 		{
-			if (numWinners.val() == '')
+			if (numWinners.val() != '')
 			{
-				// numWinners.val(numWinnersInitText);
-				// numWinners.css("color", "gray");
-				// numWinnersSet=false;
-			}
-			else
-			{
-				// numWinnersSet = true;
-				// numWinnersVal = numWinners.val();
-				updateManifest();
+				updateManifestDefaultTab(randomKey);
+				updateManifestOrderingTab(randomKey);
 			}
 		});
 		participantsList.blur(function(eventObject) 
 		{
-			updateManifest();
+			updateManifestDefaultTab(randomKey);
+			updateManifestOrderingTab(randomKey);
 			console.log(participantsList.val().split(","));
 		})
-		// resultsTime.blur(function(eventObject)
-		// {
-		// // 	if (resultsTime.val() == '')
-		// // 	{
-		// // 		resultsTime.val(resultsTimeInitText);
-		// // 		resultsTime.css("color", 'gray');
-		// // 		resultsTimeSet=false;
-		// // 	}
-		// // 	else
-		// // 	{
-		// 		resultsTimeVal = resultsTime.val();
-		// 		console.log("resultsTimeVal: " + resultsTimeVal);
-		// 		resultsTimeSet = true;
-		// 		if (resultsDateSet && resultsTimeSet)
-		// 		{
-		// 			console.log('here!');
-		// 			getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
-		// 			setTimeout(function()
-		// 			{
-		// 				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-		// 				updateManifest();
-		// 			}, 1000);
-		// 		}
-
-		// // 	}
-		// });
 	}
 	setFieldInputBehavior();
+	updateManifestDefaultTab(randomKey);
 
-	submitButton.click(function(event)
+	$('#submitButtonDefault').click(function(event)
 	{
-		if (resultsDateSet && resultsTimeSet)
+		if (futureBlockNum.stringVal !== "")
 		{
 			event.preventDefault();
 			var namesList = participantsList.val();
@@ -323,9 +313,9 @@ function setFields1(randomKey)
 					participantsList: namesList,
 				},
 				randomKey : randomKey,
-				hashOutputString : hashOutputString,
-				scriptText: scriptText,
-				allowMultipleWins: $('input[name="radio1"]:checked').val(),
+				hashOutputString : getDefaultTabHash(randomKey),
+				scriptText: defaultLotteryScript,
+				allowMultipleWins: $('input[name="radioDefault1"]:checked').val(),
 			}), function(returned_data)
 			{
 				console.log(returned_data);
@@ -336,213 +326,37 @@ function setFields1(randomKey)
 	});
 }
 
-function setFields2(randomKey)
+function setFieldsOrderingTab(randomKey)
 {
 	console.log("randomKey: " + randomKey);
-	// initialize the field values, make them gray
-	// var numParticipantsInitText = "35";
-	// var numWinnersInitText = "2";
-	// var resultsDateInitText = "10/5/14";
-	// var resultsTimeInitText = "4:50 PM";
-
-	var numParticipants = $('#numParticipants2');
-	// numParticipants.css("color", 'gray');
-	var numWinners = $('#numWinners2');
-	// numWinners.css("color", 'gray');
-	var resultsDate = $('#resultsDate2');
-	// resultsDate.css("color", 'gray');
-	var resultsTime = $('#resultsTime2');
-	var participantsList = $('#participantList2');
-	// resultsTime.css("color", 'gray');
-	var manifestWindow = $('#manifestWindow2');
-	var submitButton = $('#submitButton2');
-
-	// create boolean variables ot let us know whether the fields have been set or not
-	// var numParticipantsSet = false;
-	// var numWinnersSet = false;
-	var resultsDateSet = false;
-	var resultsTimeSet = false;
-	var scriptText = fakeLotteryScript;
-
-	// numParticipants.val(numParticipantsInitText);
-	// numWinners.val(numWinnersInitText);
-	// resultsDate.val(resultsDateInitText);
-	// resultsTime.val(resultsTimeInitText);
-
-	numParticipantsVal = numParticipants.val();
-	numWinnersVal = numWinners.val();
-	participantsListVal = participantsList.val();
-
-	var resultsDateVal;
-	var resultsTimeVal;
-	// resultsDateVal = resultsDate.val();
-	// resultsTimeVal = resultsTime.val();
-	resultsDate.datepicker({
-		onSelect: function(dateText, inst){
-			resultsDateVal = dateText;
-			console.log(resultsDateVal);
-			resultsDateSet = true;
-			if (resultsDateSet && resultsTimeSet)
-			{
-				getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
-				setTimeout(function()
-				{
-					console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-					updateManifest();
-				}, 1000);
-			}
-		},
-	});
-
-	resultsTime.timepicker({
-		selectTime: function(){
-			console.log(resultsTime.getVal())
-		},
-	});
-
-	var futureBlockNum = {stringVal: ""};
-	var hashOutputString;
-
-	// update the manifest window
-	function updateManifest()
-	{
-		// Find the hash of the inputs
-		var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
-		console.log("allInputsConcatenated: " + allInputsConcatenated);
-		// var allInputsConcatenatedArray = sjcl.codec.utf8String.toBits(allInputsConcatenated);
-		// console.log(allInputsConcatenatedArray);
-		var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
-		console.log("hashOutput: " + hashOutput);
-		// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
-		var hexOfHash = sjcl.codec.hex.fromBits(hashOutput);
-		console.log(hexOfHash);
-		hashOutputString = hexOfHash.toString()
-		console.log("hashOutputString: " + hashOutputString);
-		console.log("scriptText: " + scriptText + " typeof: " + typeof scriptText);
-
-		// if (typeof scriptText != "undefined")
-		// {
-			manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-			+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-			+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-			// + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": " + scriptText + "<br>
-			+ "\}");
-		// }
-		// else
-		// {
-		// 	manifestWindow.html("\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-		// 	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-		// 	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>\}");
-		// }
-	}
-
-	updateManifest();
+	var numParticipants = $('#numParticipantsOrdering');
+	var participantsList = $('#participantListOrdering');
 
 	function setFieldInputBehavior()
 	{
-		// numParticipants.focus(function(eventObject) {
-		// 	if (!numParticipantsSet)
-		// 	{
-		// 		numParticipants.val('');
-		// 		numParticipants.css("color", 'black');
-		// 	}
-		// });
-		// numWinners.focus(function(eventObject) {
-		// 	if (!numWinnersSet)
-		// 	{
-		// 		numWinners.val('');
-		// 		numWinners.css("color", 'black');
-		// 	}
-		// });
-		// resultsDate.focus(function(eventObject)
-		// {
-		// 	if (!resultsDateSet)
-		// 	{
-		// 		resultsDate.val('');
-		// 		resultsDate.css("color", 'black');
-		// 	}
-		// });
-		// resultsTime.focus(function(eventObject)
-		// {
-		// 	if (!resultsTimeSet)
-		// 	{
-		// 		resultsTime.val('');
-		// 		resultsTime.css("color", "black");
-		// 	}
-		// });
-
 		numParticipants.blur(function(eventObject) 
 		{
-			if (numParticipants.val() == '')
+			if (numParticipants.val() != '')
 			{
-				// numParticipants.val(numParticipantsInitText);
-				// numParticipants.css("color", "gray");
-				// numParticipantsSet=false;
-			}
-			else
-			{
-				// numParticipantsSet = true;
-				// numParticipantsVal = numParticipants.val();
-				updateManifest();
-			}
-		});
-		numWinners.blur(function(eventObject) 
-		{
-			if (numWinners.val() == '')
-			{
-				// numWinners.val(numWinnersInitText);
-				// numWinners.css("color", "gray");
-				// numWinnersSet=false;
-			}
-			else
-			{
-				// numWinnersSet = true;
-				// numWinnersVal = numWinners.val();
-				updateManifest();
+				updateManifestDefaultTab(randomKey);
+				updateManifestOrderingTab(randomKey);
 			}
 		});
 		participantsList.blur(function(eventObject) 
 		{
-			updateManifest();
+			updateManifestDefaultTab(randomKey);
+			updateManifestOrderingTab(randomKey);
 			console.log(participantsList.val().split(","));
 		})
-		resultsTime.blur(function(eventObject)
-		{
-		// 	if (resultsTime.val() == '')
-		// 	{
-		// 		resultsTime.val(resultsTimeInitText);
-		// 		resultsTime.css("color", 'gray');
-		// 		resultsTimeSet=false;
-		// 	}
-		// 	else
-		// 	{
-				resultsTimeVal = resultsTime.val();
-				console.log("resultsTimeVal: " + resultsTimeVal);
-				resultsTimeSet = true;
-				if (resultsDateSet && resultsTimeSet)
-				{
-					console.log('here!');
-					getFutureBlockNum(futureBlockNum, resultsDateVal, resultsTimeVal);
-					setTimeout(function()
-					{
-						console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-						updateManifest();
-					}, 1000);
-				}
-
-		// 	}
-		});
 	}
 	setFieldInputBehavior();
+	updateManifestOrderingTab(randomKey);
 
-	submitButton.click(function(event)
+	$('#submitButtonOrdering').click(function(event)
 	{
-		if (resultsDateSet && resultsTimeSet)
+		if (futureBlockNum.stringVal !== "")
 		{
 			event.preventDefault();
-			// var manifestJson = { futureBlockNum :  }
 			var namesList = participantsList.val();
 			if (namesList !== "")
 			{
@@ -560,8 +374,60 @@ function setFields2(randomKey)
 					participantsList: namesList,
 				},
 				randomKey : randomKey,
-				hashOutputString : hashOutputString,
-				scriptText: scriptText,
+				hashOutputString : getOrderingTabHash(randomKey),
+				scriptText: fakeLotteryScript,
+			}), function(returned_data)
+			{
+				console.log(returned_data);
+				alert("/manifest/"+returned_data);
+				window.location.href = "/manifest/" + returned_data;
+			});
+		}
+	});
+}
+
+function setFieldsRandomTab(randomKey)
+{
+	console.log("randomKey: " + randomKey);
+	updateManifestRandomTab(randomKey);
+
+	$('#submitButtonRandom').click(function(event)
+	{
+		if (futureBlockNum.stringVal !== "")
+		{
+			event.preventDefault();
+			$.post("/created", JSON.stringify(
+			{
+				futureBlockNum: futureBlockNum.stringVal,
+				randomKey : randomKey,
+				hashOutputString : getRandomTabHash(randomKey),
+				scriptText: fakeLotteryScript,
+			}), function(returned_data)
+			{
+				console.log(returned_data);
+				alert("/manifest/"+returned_data);
+				window.location.href = "/manifest/" + returned_data;
+			});
+		}
+	});
+}
+
+function setFieldsCustomTab(randomKey)
+{
+	console.log("randomKey: " + randomKey);
+	updateManifestCustomTab(randomKey);
+
+	$('#submitButtonCustom').click(function(event)
+	{
+		if (futureBlockNum.stringVal !== "")
+		{
+			event.preventDefault();
+			$.post("/created", JSON.stringify(
+			{
+				futureBlockNum: futureBlockNum.stringVal,
+				randomKey : randomKey,
+				hashOutputString : getCustomTabHash(randomKey),
+				scriptText: scriptTextCustom,
 			}), function(returned_data)
 			{
 				console.log(returned_data);
@@ -574,9 +440,6 @@ function setFields2(randomKey)
 
 function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 {
-	// var resultsDate = $('#resultsDate').val();
-	// var resultsTime = $('#resultsTime').val();
-
 	console.log("resultsDateVal: " + resultsDateVal);
 	console.log("resultsTimeVal: " + resultsTimeVal);
 	var resultsTimeValFixed = resultsTimeVal.slice(0, resultsTimeVal.length - 2) + " " + resultsTimeVal.slice(resultsTimeVal.length - 2);
@@ -647,19 +510,17 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 function initJQueryUI()
 {
 	$('#tabs').tabs();
-	$('#radio1').buttonset();
-	$('#radio2').buttonset();
-	$('#radio3').buttonset();
+	$('#radioDefault').buttonset();
 }
-
-var randomKey;
 
 $(document).ready(function()
 {
 	initJQueryUI();
-	$('#scriptInput3').change(handleFileSelect);
+	$('#scriptInputCustom').change(handleFileSelect);
 	randomKey = sjcl.random.randomWords(4);
-	setDateTimeBehavior();
-	setFields1(randomKey);
-	setFields2(randomKey);
+	setDateTimeBehavior(randomKey);
+	setFieldsDefaultTab(randomKey);
+	setFieldsOrderingTab(randomKey);
+	setFieldsRandomTab(randomKey);
+	setFieldsCustomTab(randomKey);
 });

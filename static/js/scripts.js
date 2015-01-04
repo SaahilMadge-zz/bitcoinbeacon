@@ -13,15 +13,15 @@ function selectLotteryWinnersDefault(extractedRandomBits, numParticipants, numWi
 		concatenated = extractedRandomBits + "" + i;
 		indexHash = sjcl.hash.sha256.hash(concatenated);
 		tuples.push([i, indexHash]);
-		console.log("indexHash: " + indexHash[0]);
+		//console.log("indexHash: " + indexHash[0]);
 	}
 	// console.log(tuples[0]);
 
 	function sortEntries()
 	{
 		tuples.sort(function(a, b) {
-			console.log("a: " + a[1] + ", b: " + b[1]);
-			console.log(a[1] < b[1]);
+			//console.log("a: " + a[1] + ", b: " + b[1]);
+			//console.log(a[1] < b[1]);
 		    a = a[1];
 		    b = b[1];
 		    for (var i = 0; i < 16; i++)
@@ -66,7 +66,7 @@ function selectLotteryWinnersDefault(extractedRandomBits, numParticipants, numWi
 	console.log("resultsArray length: " + resultsArray.length);
 	return resultsArray;
 }
-var defaultLotteryScript = '' + selectLotteryWinnersDefault + ' selectLotteryWinnersDefault(randomBits, numParticipants, numWinners, allowMultipleWins);';
+var defaultLotteryScript = '' + selectLotteryWinnersDefault + ' selectLotteryWinnersDefault(extractedRandomBits, numParticipants, numWinners, allowMultipleWins);';
 
 var fakeLotteryScript = "console.log('ohai')";
 
