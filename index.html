@@ -6,8 +6,7 @@
 <!-- <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.min.css"/> -->
 <script type="text/javascript" src="/static/js/bitcoinbeacon_index.js"></script>
-
-
+<link rel="stylesheet" type="text/css" href="/static/css/bitcoinbeacon_index.css"/>
 	<title>
 		Bitcoin Beacon
 	</title>
@@ -15,18 +14,16 @@
 
 <body>
 	<!-- Little description of the Bitcoin Beacon website -->
-	<div id = "welcome">
-		<p>
-			Welcome to the Bitcoin Beacon!
-		</p>
-		<p></p>
-	</div>
+	<h1 id = "welcome">Bitcoin Beacon</h1>
+
 	<div id="description">
 		Do you want to host a lottery or drawing? At Bitcoin Beacon, you can enter how you want your lottery to be designed and when you want the results to be released. We'll send you a file with all the information about your drawing, and when the time comes for the results we'll use the Bitcoin blockchain to pick your results, truly at random!
-	</div>
+	</div><br>
 
-	<button class="homePageButton" id = "createNewButton" type="button">Create a new lottery</button>
-	<button class="homePageButton" id = "processManifestButton" type="button">Check lottery results</button>
+	<div class="buttonHolder">
+		<button class="homePageButton" id = "createNewButton" type="button">Create a new lottery</button>
+		<button class="homePageButton" id = "processManifestButton" type="button">Check lottery results</button>
+	</div>
 </body>
 
 </html>

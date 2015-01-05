@@ -1,9 +1,36 @@
 html {
 	height: 100%;
+	font-family: Helvetica, 'sans-serif';
+
 }
 
 body {
 	height: 100%;
+}
+
+h1 {
+	text-align: center;
+	color: #3399ff;
+}
+
+input[type="text"] {
+	margin-bottom: 5px;
+	padding-bottom: 4px;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 4px;
+	border: solid 1px #3399ff;
+	height: 21px;
+	width: 200.21875px;
+}
+
+#dateTimeInput {
+	font-size: 18px;
+	color: #525252;
+}
+
+#futureBlockNumDisplay {
+	font-weight: bold;
 }
 
 .manifestWindow {

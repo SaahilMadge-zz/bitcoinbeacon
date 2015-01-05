@@ -309,11 +309,11 @@ function setFieldsDefaultTab(randomKey)
 			$.post("/created", JSON.stringify(
 			{
 				futureBlockNum: futureBlockNum.stringVal,
-				lotteryDetails: {
-					numParticipants: numParticipants.val(),
-					numWinners : numWinners.val(),
-					participantsList: namesList,
-				},
+				// lotteryDetails: {
+				numParticipants: numParticipants.val(),
+				numWinners : numWinners.val(),
+				participantsList: namesList,
+				// },
 				randomKey : randomKey,
 				hashOutputString : getDefaultTabHash(randomKey),
 				scriptText: defaultLotteryScript,
@@ -370,11 +370,10 @@ function setFieldsOrderingTab(randomKey)
 			$.post("/created", JSON.stringify(
 			{
 				futureBlockNum: futureBlockNum.stringVal,
-				lotteryDetails: {
-					numParticipants: numParticipants.val(),
-					numWinners : numWinners.val(),
-					participantsList: namesList,
-				},
+				// lotteryDetails: {
+				numParticipants: numParticipants.val(),
+				participantsList: namesList,
+				// },
 				randomKey : randomKey,
 				hashOutputString : getOrderingTabHash(randomKey),
 				scriptText: fakeLotteryScript,
@@ -532,7 +531,7 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				// 	diff = futureBlockNumber - nextRetargetBlock;
 				// 	console.log("total retargets till this time: " + (1 + Math.floor(diff/2016)));
 				// }
-				$('#futureBlockNumDisplay').text("Future block num: " + futureBlockNumber);
+				$('#futureBlockNumDisplay').text("Future block: " + futureBlockNumber);
 			})
 		}).fail(function(retargetTextStatus, error)
 		{

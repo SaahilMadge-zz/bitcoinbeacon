@@ -8,24 +8,26 @@
 	<script type="text/javascript" src="/static/js/sjcl.js"></script>
 	<script type="text/javascript" src="/static/js/scripts.js"></script>
 	<script type="text/javascript" src="/static/js/bitcoinbeacon_create.js"></script>
-	<link rel="stylesheet" type="text/css" href="/static/css/bitcoinbeacon_create.css"/>
+	
 	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css"/>
 	<link rel="stylesheet" type="text/css" href="/static/css/jquery.timepicker.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/css/bitcoinbeacon_create.css"/>
 
 	<title>
-		Create a new lottery
+		Create a new manifest!
 	</title>
 </head>
 
 <body>
 	<!-- Little description of the Bitcoin Beacon website -->
 	<div id = "welcome">
-		<p>
-			Create a new lottery!
-		</p>
-	Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
-	Time to make results available: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input"><br>
-		<p id="futureBlockNumDisplay"></p>
+		<h1>Create a new manifest!</h1>
+
+		<div id="dateTimeInput">
+			Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
+			Time to make results available: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input"><br>
+			<p id="futureBlockNumDisplay"></p>
+		</div>
 	</div>
 
 	<div id="tabs">
