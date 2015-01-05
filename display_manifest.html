@@ -10,6 +10,7 @@
 	</title>
 </head>
 <body>
+	<h1>Manifest {{ id }}</h1>
 	<div id="manifestContainer">
 		{#
 		{ <br>
@@ -32,9 +33,12 @@
 			{% endif %}
 		{% endfor %}
 	</div> -->
-	{% for key in manifest %}
-		<div class="manifestDetails"> {{ key }}: <div id="{{key}}" class="manifestDetailsValues"> {{ manifest[key] }}</div></div><br>
-	{% endfor %}
+	<table>
+		{% for key in manifest %}
+			<tr> <td class="manifestDetails" id="{{key}}Row"> {{ key }}: </td> <td id="{{key}}" class="manifestDetailsValues"> {{ manifest[key] }} </td> </tr>
+		{% endfor %}
+	</table>
+
 	<div id="updatedTime"></div>
 	<button type="button" id="processLottery" val="Get results!">Get results!</button>
 	<div id="winnersPane"></div>

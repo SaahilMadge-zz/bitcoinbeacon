@@ -1,9 +1,70 @@
+html {
+	font-family: Helvetica, 'Roboto Condensed', Helvetica, 'sans-serif';
+	background-color: #80ffbf;
+}
+
+h1 {
+	text-align: center;
+	color: #3399ff;
+}
+
+table {
+	margin-top: 50px;
+	border-collapse: collapse;
+}
+
+tr {
+	margin-top: 20px;
+	height: 80px;
+	color: #3399ff;
+}
+
+tr:nth-child(odd) {
+	background-color: #3399ff;
+	color: white;
+}
+
 .manifestDetails
 {
 	font-weight: bold;
+	text-align: center;
+	width: 250px;
 }
 
 .manifestDetailsValues
 {
+	margin-left: 20px;
 	font-weight: normal;
+}
+
+#processLottery {
+/*	background-color: #3399ff;
+	border-color: #3399ff;
+	color: white;*/
+    background-color: transparent;
+    border-color: #3399ff;
+    border: 1px solid;
+    color: #3399ff;
+    width: 200px;
+    height: 50px;
+    cursor: pointer;
+
+    font-size: 15px;
+    font-weight: normal;
+    line-height: 1.4;
+    border-radius: 4px;
+    padding: 10px 15px;
+    outline-color: black;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+#processLottery:hover {
+    /*-webkit-transition: background linear 0.1s;*/
+    -webkit-transition: border .1s linear, color .1s linear, background-color .1s linear;
+    transition: border .1s linear, color .1s linear, background-color .1s linear;
+    background-color: #3399ff;
+    border-color: #3399ff;
+    color: white;
+    /*background-color: transparent;
+    color: black;*/
 }

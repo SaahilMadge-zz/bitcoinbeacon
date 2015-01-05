@@ -51,7 +51,7 @@
 				</div>
 				<div id="manifestWindowDefault" class="manifestWindow"></div>
 			</form>
-			<button type="button" id="submitButtonDefault">Submit the manifest</button>
+			<button type="button" id="submitButtonDefault" class="submitButton">Submit the manifest</button>
 		</div>
 
 		<div id="fragment-2">
@@ -66,33 +66,36 @@
 				</div>
 				<div id="manifestWindow2" class="manifestWindow"></div>
 			</form>
-			<button type="button" id="submitButton2">Submit the manifest</button>
+			<button type="button" id="submitButton2" class="submitButton">Submit the manifest</button>
 		</div>
 
 		<div id="orderingTab">
 			<p id="lotteryDescriptionOrdering">In this type of lottery, you can specify the probability of each entry winning.</p>
 			<form id ="createLotteryFormOrdering">
 				Number of participants: <input type="text" name="numParticipantsOrdering" id="numParticipantsOrdering"><br>
-				Name participants (write the names separated by commas:) <input type="text" name="participantListOrdering" id="participantListOrdering"><br><br>
+				Name participants (write the names separated by commas:) <input type="text" name="participantListOrdering" id="participantListOrdering"><br>
+				<p style="font-weight: bold;"> OR </p>
+				Add participants in a csv file: <input type="file" name="participantsInputOrdering" id="participantsInputOrdering"><br><br>
+				<div id="fileInformationOrdering"></div>
 				<div id="manifestWindowOrdering" class="manifestWindow"></div>
 			</form>
-			<button type="button" id="submitButtonOrdering">Submit the manifest</button>
+			<button type="button" id="submitButtonOrdering" class="submitButton">Submit the manifest</button>
 		</div>
 
 		<div id="randomTab">
 			<p id="lotteryDescriptionRandom">In this type of lottery, you can specify the probability of each entry winning.</p>
 			<div id="manifestWindowRandom" class="manifestWindow"></div>
-			<button type="button" id="submitButtonRandom">Submit the manifest</button>
+			<button type="button" id="submitButtonRandom" class="submitButton">Submit the manifest</button>
 		</div>
 
 		<div id="customTab">
 			<p id="lotteryDescriptionCustom">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Below is an example script. Please allow the script to take three variables: randomBits, numParticipants, numWinners. After calculating your results, please return an array containing the winners. </p>
 			<form id ="createLotteryFormCustom">
-				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="script" id="scriptInputCustom"><br><br>
+				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="scriptInputCustom" id="scriptInputCustom"><br><br>
 				<div id="fileInformationCustom"></div>
 				<div id="manifestWindowCustom" class="manifestWindow"></div>
 			</form>
-			<button type="button" id="submitButtonCustom">Submit the manifest</button>
+			<button type="button" id="submitButtonCustom" class="submitButton">Submit the manifest</button>
 		</div>
 	</div>
 </body>

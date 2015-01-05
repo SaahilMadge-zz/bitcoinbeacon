@@ -86,23 +86,46 @@ function processLottery()
 	// console.log(blockNumber);
 
 	// hack together a way to get the JSON object since Python is really annoying with how it displays things
-	lotteryDetailsString = $('#lotteryDetails').html().replace(/u\'/g, '\'').replace(/\'/g, '\"');//.replace(/numParticipants/, '\"numParticipants\"').replace(/numWinners/, '\"numWinners\"').replace(/participantsList/,'\"participantsList\"');
-	console.log('lotteryDetails: ' + lotteryDetailsString);
-	lotteryDetails=JSON.parse(lotteryDetailsString);
-	numParticipants = lotteryDetails.numParticipants;
-	numWinners = lotteryDetails.numWinners;
-	participantsList = lotteryDetails.participantsList;
-	participantsList = participantsList.split(",");
-	randomKeyBitArray = $('#randomKey').html();
-	allowMultipleWins = $('#allowMultipleWins').html().toString().trim();
-	console.log("initial allowMultipleWins: " + allowMultipleWins);
-	if (allowMultipleWins === "no")
-	{
-		allowMultipleWins = false;
+	//lotteryDetailsString = $('#lotteryDetails').html().replace(/u\'/g, '\'').replace(/\'/g, '\"');//.replace(/numParticipants/, '\"numParticipants\"').replace(/numWinners/, '\"numWinners\"').replace(/participantsList/,'\"participantsList\"');
+	//console.log('lotteryDetails: ' + lotteryDetailsString);
+	//lotteryDetails=JSON.parse(lotteryDetailsString);
+	//numParticipants = lotteryDetails.numParticipants;
+	//numWinners = lotteryDetails.numWinners;
+	//participantsList = lotteryDetails.participantsList;
+	var numParticipants = null;
+	var numWinners = null;
+	var participantsList = null;
+	var allowMultipleWins = null;
+
+	if ($('#numParticipants').length) {
+		numParticipants = $('#numParticipants').html();
 	}
-	else
-	{
-		allowMultipleWins = true;
+	if ($('#numWinners').length) {
+		numWinners = $('#numWinners').html();
+		console.log('here!');
+	}
+	if ($('#participantsList').length) {
+		participantsList = $('#participantsList').html().trim();
+		console.log(participantsList.length);
+		if (!participantsList.length) {
+			participantsList = null;
+		}
+	}
+	if (participantsList != null) {
+		participantsList = participantsList.split(",");
+	}
+	randomKeyBitArray = $('#randomKey').html();
+	if ($('#allowMultipleWins').length) {
+		allowMultipleWins = $('#allowMultipleWins').html().toString().trim();
+		console.log("initial allowMultipleWins: " + allowMultipleWins);
+		if (allowMultipleWins === "no")
+		{
+			allowMultipleWins = false;
+		}
+		else
+		{
+			allowMultipleWins = true;
+		}
 	}
 
 	console.log('blockNumber: ' + blockNumber + ', numParticipants: ' + numParticipants + ', numWinners: ' + numWinners + ', randomKey: ' + randomKeyBitArray + ", allowMultipleWins: " + allowMultipleWins);
@@ -226,30 +249,79 @@ function processLottery()
 						if ($('#scriptText').length)
 						{
 							scriptText = $('#scriptText').html().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+						
+							// console.log("scriptText: " + scriptText);
+							// console.log("randomBitsOutside: " + randomBits);
+							var tuples = eval(scriptText);
+							console.log("tuples: " + tuples);
+							// default lottery
+							if (numWinners) 
+							{
+								console.log("tuples.length: " + tuples.length);
+
+								var winnersPane = $('#winnersPane');
+								winnersPane.html("<b>Winners:</b> ");
+								for (var i = 0; i < numWinners; i++)
+								{
+									if (participantsList.length) 
+									{
+										console.log(participantsList.length);
+										if (tuples[i][0] < participantsList.length)
+										{
+											winnersPane.append("" + participantsList[tuples[i][0]]);
+										}
+										else
+										{
+											winnersPane.append("" + tuples[i][0]);
+										}
+									}
+									else 
+									{
+										winnersPane.append("" + tuples[i][0]);
+									}
+
+									if (i < numParticipants - 1)
+									{
+										winnersPane.append(", ");
+									}
+								}
+							}
+							// ordered lottery
+							else if (numParticipants) 
+							{
+								var winnersPane = $('#winnersPane');
+								winnersPane.html("<b>Order:</b> ");
+								for (var i = 0; i < numParticipants; i++)
+								{
+									if (participantsList) 
+									{
+										if (tuples[i][0] < participantsList.length)
+										{
+											winnersPane.append("" + participantsList[tuples[i][0]]);
+										}
+										else
+										{
+											winnersPane.append("" + tuples[i][0]);
+										}
+									}
+									else 
+									{
+										winnersPane.append("" + tuples[i][0]);
+									}
+
+									if (i < numParticipants - 1)
+									{
+										winnersPane.append(", ");
+									}
+								}
+							}
+							else {
+								var winnersPane = $('#winnersPane');
+								winnersPane.html("<b>" + tuples + "</b> ");
+							}
 						}
-						// console.log("scriptText: " + scriptText);
-						// console.log("randomBitsOutside: " + randomBits);
-						var tuples = eval(scriptText);
-						console.log("tuples.length: " + tuples.length);
-						console.log("tuples: " + tuples);
+						else {
 
-						var winnersPane = $('#winnersPane');
-						winnersPane.html("<b>Winners:</b> ");
-						for (var i = 0; i < numWinners; i++)
-						{
-							if (tuples[i][0] < participantsList.length)
-							{
-								winnersPane.append("" + participantsList[tuples[i][0]]);
-							}
-							else
-							{
-								winnersPane.append("" + tuples[i][0]);
-							}
-
-							if (i < numWinners - 1)
-							{
-								winnersPane.append(", ");
-							}
 						}
 
 					}).fail(function(textStatus, error)
@@ -298,6 +370,21 @@ $(document).ready(function()
 
 	var futureBlockNum = parseInt($('#futureBlockNum').html());
 	console.log("futureBlockNum: " + futureBlockNum);
+
+	if ($('#numParticipantsRow').length) {
+		$('#numParticipantsRow').html("Number of Participants: ");
+	}
+	if ($('#numWinnersRow').length) {
+		$('#numWinnersRow').html("Number of Winners: ");
+		console.log('here!');
+	}
+	if ($('#participantsListRow').length) {
+		$('#participantsListRow').html("Participants: ");
+	}
+	$('#hashOutputStringRow').html("Manifest Hash: ");
+	$('#futureBlockNumRow').html("Block: ");
+	$('#randomKeyRow').html("Random Key: ");
+	$('#scriptTextRow').html("Script: ");
 
 	$.ajax(
 	{

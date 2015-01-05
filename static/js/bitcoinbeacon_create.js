@@ -10,9 +10,7 @@ function printFileInfo(file)
 	$('#fileInformationCustom').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
 }
 
-var scriptText;
-
-function handleFileSelect(evt)
+function handleFileSelectCustom(evt)
 {
 	file = evt.target.files[0];
 	console.log(file);
@@ -21,12 +19,20 @@ function handleFileSelect(evt)
 	{
 		printFileInfo(file);
 	}
-	readFile();
-	console.log("scriptText Now: " + scriptTextCustom);
-	updateManifestCustomTab(randomKey, scriptTextCustom);
+	var reader = new FileReader();
+	var scriptTextCustom;
+	reader.onload = function()
+	{
+		scriptTextCustom = reader.result;
+		console.log(scriptTextCustom);
+		console.log("here!");
+		console.log("scriptText Now: " + scriptTextCustom);
+		updateManifestCustomTab(randomKey, scriptTextCustom);
+	}
+	reader.readAsText(file);
 }
 
-function readFile()
+function readFileCustom()
 {
 	var reader = new FileReader();
 	reader.onload = function()
@@ -34,6 +40,34 @@ function readFile()
 		scriptTextCustom = reader.result;
 		console.log(scriptText);
 		console.log("here!");
+	}
+	reader.readAsText(file);
+}
+
+var orderingParticipantFileSelected = false;
+var participantsListOrdering = null;
+
+function handleFileSelectOrdering(evt)
+{
+	file = evt.target.files[0];
+	console.log(file);
+	console.log("tabs: " + $('#tabs').tabs("option", "active"));
+	if (file != null)
+	{
+		printFileInfo(file);
+	}
+
+	var reader = new FileReader();
+	reader.onload = function()
+	{
+		// scriptTextCustom = reader.result;
+		// console.log(scriptText);
+		participantsList = reader.result;
+		orderingParticipantFileSelected = true;
+		console.log("here!");
+		console.log("participantsList: " + participantsList);
+		participantsListOrdering = participantsList;
+		updateManifestOrderingTab(randomKey);
 	}
 	reader.readAsText(file);
 }
@@ -69,7 +103,7 @@ function setDateTimeBehavior(randomKey)
 			resultsDateSet = true;
 			if (resultsDateSet && resultsTimeSet)
 			{
-				getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal);
+				getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal, randomKey);
 			}
 		},
 	});
@@ -89,7 +123,7 @@ function setDateTimeBehavior(randomKey)
 			resultsTimeSet = true;
 			if (resultsDateSet && resultsTimeSet)
 			{
-				getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal);
+				getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal, randomKey);
 			}
 		}
 	});
@@ -151,11 +185,19 @@ function getDefaultTabHash(randomKey)
 
 function getOrderingTabHash(randomKey)
 {
-	var numParticipants = $('#numParticipantsDefault');
-	var participantsList = $('#participantListDefault');
+	var numParticipants = $('#numParticipantsOrdering');
+	var participantsList;
+	if (!participantsListOrdering) {
+		participantsList = $('#participantListOrdering').val();
+		console.log("participantsList: " + participantsList);
+	}
+	else {
+		participantsList = participantsListOrdering;
+		console.log("participantsList: " + participantsList);
+	}
 
 	// Find the hash of the inputs
-	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + randomKey; 
+	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + participantsList + randomKey; 
 	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
 	// console.log("hashOutput: " + hashOutput);
 	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
@@ -205,10 +247,11 @@ function updateManifestDefaultTab(randomKey)
 	var manifestWindow = $('#manifestWindowDefault');
 	var hashOutputString = getDefaultTabHash(randomKey);
 
-	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() + ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal
+	+ ", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() 
+	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() 
+	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
 	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"script\": default script<br>"
 	+ "\}");
 }
@@ -216,15 +259,24 @@ function updateManifestDefaultTab(randomKey)
 function updateManifestOrderingTab(randomKey)
 {
 	var numParticipants = $('#numParticipantsOrdering');
-	var participantsList = $('#participantListOrdering');
+	var participantsList;
+	if (!participantsListOrdering) 
+	{
+		participantsList = $('#participantListOrdering').val();
+		console.log("ohai: " + participantsList);
+	}
+	else 
+	{
+		participantsList = participantsListOrdering;
+	}
 	var manifestWindow = $('#manifestWindowOrdering');
 	var hashOutputString = getOrderingTabHash(randomKey);
 
-	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal + " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"lotteryDetails\": <br>" 
-	+ " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() + ", <br>"
-	+ "<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
-	+ " <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \} <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
-	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"scriptText\": ordering script <br>"
+	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal
+	+ ", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() 
+	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList
+	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
+	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"script\": ordering script<br>"
 	+ "\}");
 }
 
@@ -359,24 +411,26 @@ function setFieldsOrderingTab(randomKey)
 		if (futureBlockNum.stringVal !== "")
 		{
 			event.preventDefault();
-			var namesList = participantsList.val();
-			if (namesList !== "")
+			var participantsListVal;
+			alert(participantsListVal);
+			if (!participantsListOrdering) 
 			{
-				for (var i = 0; i < namesList.length; i++)
-				{
-					namesList[i] = namesList[i].trim();
-				}
+				participantsListVal = participantsList.val().trim();
+			}
+			else 
+			{
+				participantsListVal = participantsListOrdering;
 			}
 			$.post("/created", JSON.stringify(
 			{
 				futureBlockNum: futureBlockNum.stringVal,
 				// lotteryDetails: {
 				numParticipants: numParticipants.val(),
-				participantsList: namesList,
+				participantsList: participantsListVal,
 				// },
 				randomKey : randomKey,
 				hashOutputString : getOrderingTabHash(randomKey),
-				scriptText: fakeLotteryScript,
+				scriptText: orderedLotteryScript,
 			}), function(returned_data)
 			{
 				console.log(returned_data);
@@ -553,7 +607,8 @@ function initJQueryUI()
 $(document).ready(function()
 {
 	initJQueryUI();
-	$('#scriptInputCustom').change(handleFileSelect);
+	$('#scriptInputCustom').change(handleFileSelectCustom);
+	$('#participantsInputOrdering').change(handleFileSelectOrdering);
 	randomKey = sjcl.random.randomWords(4);
 	setDateTimeBehavior(randomKey);
 	setFieldsDefaultTab(randomKey);

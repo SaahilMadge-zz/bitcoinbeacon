@@ -125,3 +125,5 @@ function orderedLottery(extractedRandomBits, numParticipants)
 
 	return participantOrder;
 }
+
+var orderedLotteryScript = '' + orderedLottery + ' orderedLottery(extractedRandomBits, numParticipants, numWinners, allowMultipleWins);';
