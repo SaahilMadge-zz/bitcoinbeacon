@@ -71,7 +71,7 @@
 		</div> -->
 
 		<div id="orderingTab">
-			<p id="lotteryDescriptionOrdering">In this type of lottery, you can specify the probability of each entry winning.</p>
+			<p id="lotteryDescriptionOrdering">In this type of lottery, the participants are given a random ordering. </p>
 			<form id ="createLotteryFormOrdering">
 				Number of participants: <input type="text" name="numParticipantsOrdering" id="numParticipantsOrdering"><br>
 				Name participants (write the names separated by commas:) <input type="text" name="participantListOrdering" id="participantListOrdering"><br>
@@ -84,13 +84,13 @@
 		</div>
 
 		<div id="randomTab">
-			<p id="lotteryDescriptionRandom">In this type of lottery, you can specify the probability of each entry winning.</p>
+			<p id="lotteryDescriptionRandom">This manifest simply provides a 128-bit random number at the time specified.</p>
 			<div id="manifestWindowRandom" class="manifestWindow"></div>
 			<button type="button" id="submitButtonRandom" class="submitButton">Submit the manifest</button>
 		</div>
 
 		<div id="customTab">
-			<p id="lotteryDescriptionCustom">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Below is an example script. Please allow the script to take three variables: randomBits, numParticipants, numWinners. After calculating your results, please return an array containing the winners. </p>
+			<p id="lotteryDescriptionCustom">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Please allow the script to take the variable "extractedRandomBits". After calculating your results, please return an array containing the winners. </p>
 			<form id ="createLotteryFormCustom">
 				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="scriptInputCustom" id="scriptInputCustom"><br><br>
 				<div id="fileInformationCustom"></div>
