@@ -560,7 +560,7 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				console.log("futureDateMs:  " + futureDateMs);
 
 				var difference = futureDateMs - currentBlockDate;
-				var differenceMinutes = difference / 60000;
+				var differenceMinutes = Math.ceil(difference / 60000);
 				console.log("difference (ms): " + difference);
 				console.log("difference (minutes): " + differenceMinutes);
 
@@ -574,12 +574,21 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				   arrive before specified time */
 
 				var differenceBlocks = Math.ceil(differenceMinutes / totalTimeAverage);
-				alert(jStat.gamma.cdf(differenceMinutes, differenceBlocks, totalTimeAverage));
-
 				console.log("difference (blocks): " + differenceBlocks);
+				console.log("normal cdf: " + jStat.gamma.cdf(differenceMinutes, differenceBlocks, totalTimeAverage));
 
-				var futureBlockNumber = latestblock + differenceBlocks;
+				var realDifferenceBlocks = differenceBlocks;
+				var cdf = 1;
+				for (; cdf > 0.01; realDifferenceBlocks++) {
+					cdf = jStat.gamma.cdf(differenceMinutes, realDifferenceBlocks, totalTimeAverage);
+					console.log("block #: " + realDifferenceBlocks + "new cdf: " + cdf);
+				}
+				console.log("actual block difference: " + realDifferenceBlocks);
+				console.log("prob check: " + cdf);
+
+				var futureBlockNumber = latestblock + realDifferenceBlocks;
 				console.log("future block number: " + futureBlockNumber);
+				console.log("prob check again: " + jStat.gamma.cdf(differenceMinutes, futureBlockNumber - latestblock, totalTimeAverage));
 
 				futureBlockNum.stringVal = futureBlockNumber.toString();
 

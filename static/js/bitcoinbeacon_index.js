@@ -54,4 +54,7 @@ $(document).ready(function()
 		totalDiff += inv - (10*i);
 	}
 	console.log("average difference: " + totalDiff / 100);
+	console.log(jStat.gamma.cdf(50, 5, 10));
+	console.log(jStat.gamma.cdf(100, 10, 10));
+	console.log(jStat.gamma.cdf(14024, 1430, 9.81));
 });
