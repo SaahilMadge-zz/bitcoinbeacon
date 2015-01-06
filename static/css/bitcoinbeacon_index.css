@@ -13,6 +13,10 @@ h1 {
 	text-align: center;
 }
 
+#manifestEntry {
+    text-align: center;
+}
+
 #createNewButton {
 /*	background-color: #3399ff;
 	border-color: #3399ff;
@@ -67,6 +71,48 @@ h1 {
 }
 
 #processManifestButton:hover {
+    /*-webkit-transition: background linear 0.1s;*/
+    -webkit-transition: border .1s linear, color .1s linear, background-color .1s linear;
+    transition: border .1s linear, color .1s linear, background-color .1s linear;
+    background-color: #3399ff;
+    border-color: #3399ff;
+    color: white;
+    /*background-color: transparent;
+    color: black;*/
+}
+
+input[type="text"] {
+    margin-bottom: 5px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    border: solid 1px #3399ff;
+    height: 21px;
+    width: 200.21875px;
+}
+
+#manifestHashEntryButton {
+/*  background-color: #3399ff;
+    border-color: #3399ff;
+    color: white;*/
+    background-color: transparent;
+    border-color: #3399ff;
+    border: 1px solid;
+    color: #3399ff;
+    width: 50px;
+    height: 20px;
+    cursor: pointer;
+
+    font-size: 10px;
+    font-weight: normal;
+    line-height: 1.4;
+    border-radius: 4px;
+    outline-color: black;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+#manifestHashEntryButton:hover {
     /*-webkit-transition: background linear 0.1s;*/
     -webkit-transition: border .1s linear, color .1s linear, background-color .1s linear;
     transition: border .1s linear, color .1s linear, background-color .1s linear;

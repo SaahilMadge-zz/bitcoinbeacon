@@ -1,6 +1,7 @@
 function pickWinners(bitArray, numParticipants, numWinners)
 {
     console.log(bitArray);
+    return bitArray;
 }
 
-pickWinners(randomBits, numParticipants, numWinners);
+pickWinners(extractedRandomBits, numParticipants, numWinners);

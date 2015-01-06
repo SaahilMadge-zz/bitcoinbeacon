@@ -10,6 +10,8 @@ function printFileInfo(file)
 	$('#fileInformationCustom').html("filename: " + file.name + ", filesize: " + file.size + ", filetype: " + file.type);
 }
 
+var scriptTextCustom = null;
+
 function handleFileSelectCustom(evt)
 {
 	file = evt.target.files[0];
@@ -20,7 +22,6 @@ function handleFileSelectCustom(evt)
 		printFileInfo(file);
 	}
 	var reader = new FileReader();
-	var scriptTextCustom;
 	reader.onload = function()
 	{
 		scriptTextCustom = reader.result;
@@ -568,7 +569,13 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				var totalTimeAverage = totalTimeMinutes / (8064 + (json.height + 2016 - nextRetargetBlock));
 				console.log(totalTimeAverage);
 
+				/* we will use this total average as our scale parameter
+				   the probability should be 0.01, to ensure 99% chance it does not
+				   arrive before specified time */
+
 				var differenceBlocks = Math.ceil(differenceMinutes / totalTimeAverage);
+				alert(jStat.gamma.cdf(differenceMinutes, differenceBlocks, totalTimeAverage));
+
 				console.log("difference (blocks): " + differenceBlocks);
 
 				var futureBlockNumber = latestblock + differenceBlocks;
