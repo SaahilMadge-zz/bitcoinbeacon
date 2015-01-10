@@ -78,9 +78,11 @@ var futureBlockNum = {stringVal: ""};
 
 function getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal, randomKey)
 {
-	getFutureBlockNum(resultsDateVal, resultsTimeVal);
+	var blockNum = getFutureBlockNum(resultsDateVal, resultsTimeVal);
 	setTimeout(function()
 	{
+		if (blockNum == null) return;
+
 		console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
 		updateManifests(randomKey);
 	}, 1000);
@@ -496,6 +498,7 @@ function setFieldsCustomTab(randomKey)
 
 function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 {
+	$('#futureBlockNumDisplay').css("color", "black").html("Calculating");
 	console.log("resultsDateVal: " + resultsDateVal);
 	console.log("resultsTimeVal: " + resultsTimeVal);
 	var resultsTimeValFixed = resultsTimeVal.slice(0, resultsTimeVal.length - 2) + " " + resultsTimeVal.slice(resultsTimeVal.length - 2);
@@ -564,6 +567,12 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				console.log("difference (ms): " + difference);
 				console.log("difference (minutes): " + differenceMinutes);
 
+				if (differenceMinutes < 0) {
+					// futureBlockNum.stringVal = futureBlockNumber.toString();
+					$('#futureBlockNumDisplay').html("The time provided is in the past! Please select a future time.").css("color", "red");
+					return null;
+				}
+
 				// calculate total time over the past 4 cycles and current cycle
 				var totalTimeMinutes = (currentBlockDate - oldBlockDate) / 60000;
 				var totalTimeAverage = totalTimeMinutes / (8064 + (json.height + 2016 - nextRetargetBlock));
@@ -601,7 +610,10 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				// 	diff = futureBlockNumber - nextRetargetBlock;
 				// 	console.log("total retargets till this time: " + (1 + Math.floor(diff/2016)));
 				// }
-				$('#futureBlockNumDisplay').text("Future block: " + futureBlockNumber);
+				$('#futureBlockNumDisplay').html("Future block: " + futureBlockNumber + "<br> Estimated time till results available: " 
+					+ new Date(currentBlockDate + 60000 * (realDifferenceBlocks * totalTimeAverage)));
+				// just return non-null
+				return 1;
 			})
 		}).fail(function(retargetTextStatus, error)
 		{

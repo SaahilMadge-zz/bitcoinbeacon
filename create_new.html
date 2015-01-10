@@ -23,12 +23,14 @@
 	<!-- Little description of the Bitcoin Beacon website -->
 	<div id = "welcome">
 		<h1>Create a new manifest!</h1>
+		<h4 id="Instructions">Here, you can create a new lottery or drawing. We call the lottery details the "lottery manifest". First, let us know when you want the results to be available. We'll convert your time to a Bitcoin block, which will be published around that time. When that block is published, we'll use random numbers generated from it to conduct the lottery. Note that there will be a delay of a couple hours from your time until the block is published. This is to ensure that the block isn't published <em>before</em> your chosen time, since Bitcoin blocks aren't published at a constant rate.<br><br> After choosing the time, you'll see four options below. These describe the types of lotteries we currently support. Clicking on each one gives a thorough description. After you fill out all the details we'll take you to a page describing the lottery, where you'll be able to see the results once they're available. You can send the link to other people, and they'll be able to see the results too.</h4>
+	</div>
 
-		<div id="dateTimeInput">
-			Date to make results available: <input type="text" name="resultsDate" id="resultsDate"><br>
-			Time to make results available: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input"><br>
-			<p id="futureBlockNumDisplay"></p>
-		</div>
+	<div id="dateTimeInput">
+		<p>What date and time should the results be released after?</p>
+		Date: <input type="text" name="resultsDate" id="resultsDate"><br>
+		Time: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input"><br>
+		<p id="futureBlockNumDisplay"></p>
 	</div>
 
 	<div id="tabs">

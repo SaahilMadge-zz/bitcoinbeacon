@@ -43,18 +43,17 @@ $(document).ready(function()
 	$('#createNewButton').click(redirectToCreateNew);
 	$('#processManifestButton').click(manifestEntry);
 
-
-	console.log(jStat.exponential.cdf(10, 1/10));
-	console.log(jStat.gamma.inv(.99, 1, 10));
-	console.log(jStat.gamma.cdf(20, 1, 10));
-	var totalDiff = 0;
-	for (var i = 0; i < 99; i++) {
-		var inv = jStat.gamma.inv(.99, i, 10)
-		console.log(inv);
-		totalDiff += inv - (10*i);
-	}
-	console.log("average difference: " + totalDiff / 100);
-	console.log(jStat.gamma.cdf(50, 5, 10));
-	console.log(jStat.gamma.cdf(100, 10, 10));
-	console.log(jStat.gamma.cdf(14024, 1430, 9.81));
+	// console.log(jStat.exponential.cdf(10, 1/10));
+	// console.log(jStat.gamma.inv(.99, 1, 10));
+	// console.log(jStat.gamma.cdf(20, 1, 10));
+	// var totalDiff = 0;
+	// for (var i = 0; i < 99; i++) {
+	// 	var inv = jStat.gamma.inv(.99, i, 10)
+	// 	console.log(inv);
+	// 	totalDiff += inv - (10*i);
+	// }
+	// console.log("average difference: " + totalDiff / 100);
+	// console.log(jStat.gamma.cdf(50, 5, 10));
+	// console.log(jStat.gamma.cdf(100, 10, 10));
+	// console.log(jStat.gamma.cdf(14024, 1430, 9.81));
 });
