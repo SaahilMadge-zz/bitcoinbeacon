@@ -325,7 +325,7 @@ $(document).ready(function()
 		if (latestblock < desiredblock)
 		{
 			var winnersPane = $('#winnersPane');
-			winnersPane.html("Sorry, the lottery results are not available yet. They will be available in about " + Math.ceil((desiredblock - latestblock) * 10) + " minutes");
+			winnersPane.html("Sorry, the lottery results are not available yet. They will be available in about " + Math.ceil((desiredblock - latestblock) * 10) + " minutes.");
 			$('#processLottery').click(function(event){
 				event.preventDefault();
 			});

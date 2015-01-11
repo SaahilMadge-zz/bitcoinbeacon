@@ -11,21 +11,9 @@
 </head>
 <body>
 	<h1>Manifest {{ id }}</h1>
-	<div id="manifestContainer">
-		{#
-		{ <br>
-		{% for key in manifest %}
-			{% if key == 'lotteryDetails' %}
-				{ 
+	<button type="button" id="processLottery" val="Get results!">Get results!</button>
+	<h4 id="winnersPane"></h4>
 
-				{% for detailKey in key %}
-
-
-			{{ key }} : {{ manifest[key] }}
-		{% endfor %}
-		#}
-		<!-- {{ manifest }} -->
-	</div>
 <!-- 	<div id="futureBlockNum">
 		{% for key in manifest %}
 			{% if key == 'futureBlockNum' %}
@@ -38,8 +26,4 @@
 			<tr> <td class="manifestDetails" id="{{key}}Row"> {{ key }}: </td> <td id="{{key}}" class="manifestDetailsValues"> {{ manifest[key] }} </td> </tr>
 		{% endfor %}
 	</table>
-
-	<div id="updatedTime"></div>
-	<button type="button" id="processLottery" val="Get results!">Get results!</button>
-	<div id="winnersPane"></div>
 </body>
