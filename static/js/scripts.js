@@ -62,8 +62,8 @@ function selectLotteryWinnersDefault(extractedRandomBits, numParticipants, numWi
 		sortEntries();
 		console.log("numWinners again: " + (numWinners - 0));
 		resultsArray = tuples.slice(0, numWinners);
+		console.log("resultsArray length: " + resultsArray.length);
 	}
-	console.log("resultsArray length: " + resultsArray.length);
 	return resultsArray;
 }
 var defaultLotteryScript = '' + selectLotteryWinnersDefault + ' selectLotteryWinnersDefault(extractedRandomBits, numParticipants, numWinners, allowMultipleWins);';
@@ -127,3 +127,17 @@ function orderedLottery(extractedRandomBits, numParticipants)
 }
 
 var orderedLotteryScript = '' + orderedLottery + ' orderedLottery(extractedRandomBits, numParticipants, numWinners, allowMultipleWins);';
+
+function randomNumber(extractedRandomBits)
+{
+	return extractedRandomBits;
+}
+
+var randomLotteryScript = '' + randomNumber + ' randomNumber(extractedRandomBits);';
+
+function sampleScript(extractedRandomBits)
+{
+	console.log(extractedRandomBits);
+}
+
+var sampleLotteryScript = '' + sampleScript + ' sampleScript(extractedRandomBits);'; 

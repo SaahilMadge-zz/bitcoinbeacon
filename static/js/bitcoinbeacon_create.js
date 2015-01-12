@@ -73,19 +73,40 @@ function handleFileSelectOrdering(evt)
 	reader.readAsText(file);
 }
 
+var defaultParticipantFileSelected = false;
+var participantsListDefault = null;
+
+function handleFileSelectDefault(evt)
+{
+	file = evt.target.files[0];
+	console.log(file);
+	console.log("tabs: " + $('#tabs').tabs("option", "active"));
+	if (file != null)
+	{
+		printFileInfo(file);
+	}
+
+	var reader = new FileReader();
+	reader.onload = function()
+	{
+		// scriptTextCustom = reader.result;
+		// console.log(scriptText);
+		participantsList = reader.result;
+		defaultParticipantFileSelected = true;
+		console.log("here!");
+		console.log("participantsList: " + participantsList);
+		participantsListDefault = participantsList;
+		updateManifestDefaultTab(randomKey);
+	}
+	reader.readAsText(file);
+}
+
 // create boolean variables to let us know whether the fields have been set or not
 var futureBlockNum = {stringVal: ""};
 
 function getFutureBlockNumAndUpdateManifests(resultsDateVal, resultsTimeVal, randomKey)
 {
 	var blockNum = getFutureBlockNum(resultsDateVal, resultsTimeVal);
-	setTimeout(function()
-	{
-		if (blockNum == null) return;
-
-		console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
-		updateManifests(randomKey);
-	}, 1000);
 }
 
 function setDateTimeBehavior(randomKey)
@@ -172,10 +193,18 @@ function getDefaultTabHash(randomKey)
 {
 	var numParticipants = $('#numParticipantsDefault');
 	var numWinners = $('#numWinnersDefault');
-	var participantsList = $('#participantListDefault');
+	var participantsList;
+	if (!participantsListDefault) {
+		participantsList = $('#participantListDefault').val();
+		console.log("participantsList: " + participantsList);
+	}
+	else {
+		participantsList = participantsListDefault;
+		console.log("participantsList: " + participantsList);
+	}
 
 	// Find the hash of the inputs
-	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + "" + randomKey; 
+	var allInputsConcatenated = futureBlockNum.stringVal + numParticipants.val() + "" + numWinners.val() + participantsList + randomKey; 
 	var hashOutput = sjcl.hash.sha256.hash(allInputsConcatenated);
 	// console.log("hashOutput: " + hashOutput);
 	// hashOutputString = sjcl.codec.utf8String.fromBits(hashOutput);
@@ -246,14 +275,21 @@ function updateManifestDefaultTab(randomKey)
 {
 	var numParticipants = $('#numParticipantsDefault');
 	var numWinners = $('#numWinnersDefault');
-	var participantsList = $('#participantListDefault');
+	if (!participantsListDefault) {
+		participantsList = $('#participantListDefault').val();
+		console.log("participantsList: " + participantsList);
+	}
+	else {
+		participantsList = participantsListDefault;
+		console.log("participantsList: " + participantsList);
+	}
 	var manifestWindow = $('#manifestWindowDefault');
 	var hashOutputString = getDefaultTabHash(randomKey);
 
 	manifestWindow.html("Manifest " + hashOutputString + "<br>\{ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"futureBlockNum\":&nbsp;" + futureBlockNum.stringVal
 	+ ", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numParticipants\":&nbsp;" + numParticipants.val() 
 	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"numWinners\":&nbsp;" + numWinners.val() 
-	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList.val()
+	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"participants\":&nbsp;"+  participantsList
 	+ ", <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \"randomKey\":&nbsp;" + randomKey + "<br>" 
 	+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"script\": default script<br>"
 	+ "\}");
@@ -313,7 +349,7 @@ function updateManifests(randomKey)
 	updateManifestCustomTab(randomKey);
 }
 
-function setFieldsDefaultTab(randomKey)
+function setFieldsDefaultTab()
 {
 	console.log("randomKey: " + randomKey);
 	var numParticipants = $('#numParticipantsDefault');
@@ -353,13 +389,15 @@ function setFieldsDefaultTab(randomKey)
 		if (futureBlockNum.stringVal !== "")
 		{
 			event.preventDefault();
-			var namesList = participantsList.val();
-			if (namesList !== "")
+			var participantsListVal;
+			//alert(participantsListVal);
+			if (!participantsListDefault)
 			{
-				for (var i = 0; i < namesList.length; i++)
-				{
-					namesList[i] = namesList[i].trim();
-				}
+				participantsListVal = participantsList.val().trim();
+			}
+			else 
+			{
+				participantsListVal = participantsListDefault;
 			}
 			$.post("/created", JSON.stringify(
 			{
@@ -367,7 +405,7 @@ function setFieldsDefaultTab(randomKey)
 				// lotteryDetails: {
 				numParticipants: numParticipants.val(),
 				numWinners : numWinners.val(),
-				participantsList: namesList,
+				participantsList: participantsListVal,
 				// },
 				randomKey : randomKey,
 				hashOutputString : getDefaultTabHash(randomKey),
@@ -383,7 +421,7 @@ function setFieldsDefaultTab(randomKey)
 	});
 }
 
-function setFieldsOrderingTab(randomKey)
+function setFieldsOrderingTab()
 {
 	console.log("randomKey: " + randomKey);
 	var numParticipants = $('#numParticipantsOrdering');
@@ -415,7 +453,7 @@ function setFieldsOrderingTab(randomKey)
 		{
 			event.preventDefault();
 			var participantsListVal;
-			alert(participantsListVal);
+			//alert(participantsListVal);
 			if (!participantsListOrdering) 
 			{
 				participantsListVal = participantsList.val().trim();
@@ -444,7 +482,7 @@ function setFieldsOrderingTab(randomKey)
 	});
 }
 
-function setFieldsRandomTab(randomKey)
+function setFieldsRandomTab()
 {
 	console.log("randomKey: " + randomKey);
 	updateManifestRandomTab(randomKey);
@@ -459,7 +497,7 @@ function setFieldsRandomTab(randomKey)
 				futureBlockNum: futureBlockNum.stringVal,
 				randomKey : randomKey,
 				hashOutputString : getRandomTabHash(randomKey),
-				scriptText: fakeLotteryScript,
+				scriptText: randomLotteryScript,
 			}), function(returned_data)
 			{
 				console.log(returned_data);
@@ -470,7 +508,7 @@ function setFieldsRandomTab(randomKey)
 	});
 }
 
-function setFieldsCustomTab(randomKey)
+function setFieldsCustomTab()
 {
 	console.log("randomKey: " + randomKey);
 	updateManifestCustomTab(randomKey);
@@ -498,7 +536,7 @@ function setFieldsCustomTab(randomKey)
 
 function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 {
-	$('#futureBlockNumDisplay').css("color", "black").html("Calculating");
+	$('#futureBlockNumDisplay').css("color", "black").html("Calculating...");
 	console.log("resultsDateVal: " + resultsDateVal);
 	console.log("resultsTimeVal: " + resultsTimeVal);
 	var resultsTimeValFixed = resultsTimeVal.slice(0, resultsTimeVal.length - 2) + " " + resultsTimeVal.slice(resultsTimeVal.length - 2);
@@ -570,7 +608,7 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				if (differenceMinutes < 0) {
 					// futureBlockNum.stringVal = futureBlockNumber.toString();
 					$('#futureBlockNumDisplay').html("The time provided is in the past! Please select a future time.").css("color", "red");
-					return null;
+					return;
 				}
 
 				// calculate total time over the past 4 cycles and current cycle
@@ -612,8 +650,9 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 				// }
 				$('#futureBlockNumDisplay').html("Future block: " + futureBlockNumber + "<br> Estimated time till results available: " 
 					+ new Date(currentBlockDate + 60000 * (realDifferenceBlocks * totalTimeAverage)));
-				// just return non-null
-				return 1;
+
+				console.log("futureBlockNumReturned: " + futureBlockNum.stringVal);
+				updateManifests(randomKey);
 			})
 		}).fail(function(retargetTextStatus, error)
 		{
@@ -632,15 +671,42 @@ function initJQueryUI()
 	$('#radioDefault').buttonset();
 }
 
+var randomKey;
+
 $(document).ready(function()
 {
 	initJQueryUI();
 	$('#scriptInputCustom').change(handleFileSelectCustom);
 	$('#participantsInputOrdering').change(handleFileSelectOrdering);
-	randomKey = sjcl.random.randomWords(4);
-	setDateTimeBehavior(randomKey);
-	setFieldsDefaultTab(randomKey);
-	setFieldsOrderingTab(randomKey);
-	setFieldsRandomTab(randomKey);
+	$('#participantsInputDefault').change(handleFileSelectDefault);
+	var initRandomKey = sjcl.random.randomWords(4);
+	randomKey = initRandomKey;
+
+	var randomKeyField = $('#randomKey');
+	randomKeyField.focus(function()
+	{
+		randomKeyField.val("");
+	})
+	randomKeyField.blur(function()
+	{
+		var val = randomKeyField.val().trim();
+		if (val == "")
+		{
+			randomKeyField.val(initRandomKey);
+		}
+		else 
+		{
+			randomKey = val;
+			updateManifests(randomKey);
+		}
+	});
+
+	$('#sampleScript').html("This is a sample script: <em>" + sampleLotteryScript+ "</em>");
+
+	randomKeyField.val(initRandomKey);
+	setDateTimeBehavior();
+	setFieldsDefaultTab();
+	setFieldsOrderingTab();
+	setFieldsRandomTab();
 	setFieldsCustomTab(randomKey);
 });

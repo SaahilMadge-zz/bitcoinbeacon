@@ -83,8 +83,8 @@ function processLottery()
 			dataType: 'json',
 
 			// for testing, use a hardcoded block
-			url: blockBaseURL + blockNumber,
-			// url: blockBaseURL + '329500',
+			// url: blockBaseURL + blockNumber,
+			url: blockBaseURL + '329500',
 			crossDomain:true,
 			contentType: 'text/plain'
 		}).done(function(json1)
@@ -105,8 +105,8 @@ function processLottery()
 				dataType: 'json',
 
 				// for testing, use a hardcoded block
-				url: blockBaseURL + (blockNumber - 1),
-				// url: blockBaseURL + '329499',
+				// url: blockBaseURL + (blockNumber - 1),
+				url: blockBaseURL + '329499',
 				crossDomain:true,
 				contentType: 'text/plain'
 			}).done(function(json2)
@@ -124,8 +124,8 @@ function processLottery()
 					dataType: 'json',
 
 					// for testing, use a hardcoded block
-					url: blockBaseURL + (blockNumber - 2),
-					// url: blockBaseURL + '329498',
+					// url: blockBaseURL + (blockNumber - 2),
+					url: blockBaseURL + '329498',
 					crossDomain:true,
 					contentType: 'text/plain'
 				}).done(function(json3)
@@ -143,8 +143,8 @@ function processLottery()
 						dataType: 'json',
 
 						// for testing, use a hardcoded block
-						url: blockBaseURL + (blockNumber - 3),
-						// url: blockBaseURL + '329497',
+						// url: blockBaseURL + (blockNumber - 3),
+						url: blockBaseURL + '329497',
 						crossDomain:true,
 						contentType: 'text/plain'
 					}).done(function(json4)
@@ -189,7 +189,7 @@ function processLottery()
 								winnersPane.html("<b>Winners:</b> ");
 								for (var i = 0; i < numWinners; i++)
 								{
-									if (participantsList.length) 
+									if (participantsList && participantsList.length) 
 									{
 										console.log(participantsList.length);
 										if (tuples[i][0] < participantsList.length)
@@ -206,7 +206,7 @@ function processLottery()
 										winnersPane.append("" + tuples[i][0]);
 									}
 
-									if (i < numParticipants - 1)
+									if (i < numWinners - 1)
 									{
 										winnersPane.append(", ");
 									}
@@ -241,9 +241,14 @@ function processLottery()
 									}
 								}
 							}
-							else {
+							else if ($('#scriptText').html().trim() === randomLotteryScript) {
 								var winnersPane = $('#winnersPane');
-								winnersPane.html("<b>" + tuples + "</b> ");
+								winnersPane.html("<b>Random Number: " + tuples + "</b> ");
+							}
+							else 
+							{
+								var winnersPane = $('#winnersPane');
+								winnersPane.html("yoyoyo");
 							}
 						}
 						else {
@@ -291,8 +296,8 @@ $(document).ready(function()
 	// console.log("parsedObj: " + parsedObj);
 	$('#processLottery').click(function(event){
 		event.preventDefault();
-		processLottery();
-	})
+	});
+	$('#processLottery').hide();
 
 	var futureBlockNum = parseInt($('#futureBlockNum').html());
 	console.log("futureBlockNum: " + futureBlockNum);
@@ -312,6 +317,10 @@ $(document).ready(function()
 	$('#randomKeyRow').html("Random Key: ");
 	$('#scriptTextRow').html("Script: ");
 
+	console.log("randomLotteryScript: " + randomLotteryScript);
+	console.log("script: " + $('#scriptText').html());
+	console.log(randomLotteryScript == $('#scriptText').html().trim());
+
 	$.ajax(
 	{
 		dataType: "text",
@@ -322,14 +331,22 @@ $(document).ready(function()
 		console.log("latestblock: " + latestblock);
 		console.log(futureBlockNum - latestblock);
 		desiredblock = $('#futureBlockNum').html();
-		if (latestblock < desiredblock)
+		// if (latestblock < desiredblock)
+		// {
+		// 	var winnersPane = $('#winnersPane');
+		// 	winnersPane.html("Sorry, the lottery results are not available yet. They will be available in about " + Math.ceil((desiredblock - latestblock) * 10) + " minutes.");
+		// 	$('#processLottery').click(function(event){
+		// 		event.preventDefault();
+		// 	});
+		// 	$('#processLottery').hide();
+		// }
+		// else 
 		{
-			var winnersPane = $('#winnersPane');
-			winnersPane.html("Sorry, the lottery results are not available yet. They will be available in about " + Math.ceil((desiredblock - latestblock) * 10) + " minutes.");
 			$('#processLottery').click(function(event){
 				event.preventDefault();
-			});
-			$('#processLottery').hide();
+				$('#winnersPane').html("Calculating...");
+				processLottery();
+			}).show();
 		}
 	}).fail(function(textStatus, error)
 	{

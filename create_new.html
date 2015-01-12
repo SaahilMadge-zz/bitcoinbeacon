@@ -23,7 +23,7 @@
 	<!-- Little description of the Bitcoin Beacon website -->
 	<div id = "welcome">
 		<h1>Create a new manifest!</h1>
-		<h4 id="Instructions">Here, you can create a new lottery or drawing. We call the lottery details the "lottery manifest". First, let us know when you want the results to be available. We'll convert your time to a Bitcoin block, which will be published around that time. When that block is published, we'll use random numbers generated from it to conduct the lottery. Note that there will be a delay of a couple hours from your time until the block is published. This is to ensure that the block isn't published <em>before</em> your chosen time, since Bitcoin blocks aren't published at a constant rate.<br><br> After choosing the time, you'll see four options below. These describe the types of lotteries we currently support. Clicking on each one gives a thorough description. After you fill out all the details we'll take you to a page describing the lottery, where you'll be able to see the results once they're available. You can send the link to other people, and they'll be able to see the results too.</h4>
+		<h4 id="Instructions">Here, you can create a new lottery or drawing. We call the lottery details the "lottery manifest". First, let us know when you want the results to be available. We'll convert your time to a Bitcoin block, which will be published around that time. When that block is published, we'll use random numbers generated from it to conduct the lottery. Note that there will be a delay of a couple hours from your time until the block is published. This is to ensure that the block isn't published <em>before</em> your chosen time, since Bitcoin blocks aren't published at a constant rate.<br><br> After choosing the time, you'll see four options below. These describe the types of lotteries we currently support. Clicking on each one gives a thorough description. After you fill out all the details we'll take you to a page describing the lottery, where you'll be able to see the results once they're available. You can send the link or just the hash to other people, and they'll be able to see the results too. At the bottom of each option, you can see a summary of the lottery similar to how it will appear on the details page. </h4>
 	</div>
 
 	<div id="dateTimeInput">
@@ -31,6 +31,11 @@
 		Date: <input type="text" name="resultsDate" id="resultsDate"><br>
 		Time: <input type="text" name="resultsTime" id="resultsTime" class="ui-timepicker-input"><br>
 		<p id="futureBlockNumDisplay"></p>
+	</div>
+
+	<div id="randomKeySelection">
+		<p id="randomKeyInfo">Here you can specify your own random nonce if you want, but we've already gone ahead and generated one you can use right away. Every time you load this page a new one is automatically generated. This is used when we extract random numbers from the Bitcoin block. Preferably, it should be a 128-bit number. </p>
+		Random Nonce: <input type="text" name="randomKey" id="randomKey"><br>
 	</div>
 
 	<div id="tabs">
@@ -47,7 +52,9 @@
 			<form id ="createLotteryFormDefault">
 				Number of participants: <input type="text" name="numParticipantsDefault" id="numParticipantsDefault"><br>
 				Number of winners: <input type="text" name="numWinnersDefault" id="numWinnersDefault"><br>
-				Name participants (write the names separated by commas:) <input type="text" name="participantListDefault" id="participantListDefault"><br><br>
+				Name participants (write the names separated by commas:) <input type="text" name="participantListDefault" id="participantListDefault"><br>
+				<p style="font-weight: bold;"> OR </p>
+				Add participants in a csv file: <input type="file" name="participantsInputDefault" id="participantsInputDefault"><br><br>
 				<div id="radioDefault">
 				    Can entries win multiple times?: <input type="radio" id="radioDefault1" name="radioDefault1" value="yes"><label for="radioDefault1">Yes</label>
 				    <input type="radio" id="radioDefault2" name="radioDefault1" checked="checked" value="no"><label for="radioDefault2">No</label>
@@ -93,6 +100,7 @@
 
 		<div id="customTab">
 			<p id="lotteryDescriptionCustom">You can specify a JavaScript script to select the lottery winners given the random bits extracted from the blockchain. Please allow the script to take the variable "extractedRandomBits". After calculating your results, please return an array containing the winners. </p>
+			<div id="sampleScript"></div><br><br>
 			<form id ="createLotteryFormCustom">
 				Add a manual script to process lottery results using the beacon randomness: <input type="file" name="scriptInputCustom" id="scriptInputCustom"><br><br>
 				<div id="fileInformationCustom"></div>

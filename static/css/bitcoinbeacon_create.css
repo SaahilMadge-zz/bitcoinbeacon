@@ -28,7 +28,7 @@ input[type="text"] {
 	width: 200.21875px;
 }
 
-#dateTimeInput {
+#dateTimeInput #randomKeySelection {
 	margin-top: 20px;
 	font-size: 18px;
 	color: #525252;
