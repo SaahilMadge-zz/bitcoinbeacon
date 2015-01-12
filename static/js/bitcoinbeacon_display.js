@@ -83,8 +83,8 @@ function processLottery()
 			dataType: 'json',
 
 			// for testing, use a hardcoded block
-			// url: blockBaseURL + blockNumber,
-			url: blockBaseURL + '329500',
+			url: blockBaseURL + blockNumber,
+			// url: blockBaseURL + '329500',
 			crossDomain:true,
 			contentType: 'text/plain'
 		}).done(function(json1)
@@ -105,8 +105,8 @@ function processLottery()
 				dataType: 'json',
 
 				// for testing, use a hardcoded block
-				// url: blockBaseURL + (blockNumber - 1),
-				url: blockBaseURL + '329499',
+				url: blockBaseURL + (blockNumber - 1),
+				// url: blockBaseURL + '329499',
 				crossDomain:true,
 				contentType: 'text/plain'
 			}).done(function(json2)
@@ -124,8 +124,8 @@ function processLottery()
 					dataType: 'json',
 
 					// for testing, use a hardcoded block
-					// url: blockBaseURL + (blockNumber - 2),
-					url: blockBaseURL + '329498',
+					url: blockBaseURL + (blockNumber - 2),
+					// url: blockBaseURL + '329498',
 					crossDomain:true,
 					contentType: 'text/plain'
 				}).done(function(json3)
@@ -143,8 +143,8 @@ function processLottery()
 						dataType: 'json',
 
 						// for testing, use a hardcoded block
-						// url: blockBaseURL + (blockNumber - 3),
-						url: blockBaseURL + '329497',
+						url: blockBaseURL + (blockNumber - 3),
+						// url: blockBaseURL + '329497',
 						crossDomain:true,
 						contentType: 'text/plain'
 					}).done(function(json4)
@@ -331,16 +331,16 @@ $(document).ready(function()
 		console.log("latestblock: " + latestblock);
 		console.log(futureBlockNum - latestblock);
 		desiredblock = $('#futureBlockNum').html();
-		// if (latestblock < desiredblock)
-		// {
-		// 	var winnersPane = $('#winnersPane');
-		// 	winnersPane.html("Sorry, the lottery results are not available yet. They will be available in about " + Math.ceil((desiredblock - latestblock) * 10) + " minutes.");
-		// 	$('#processLottery').click(function(event){
-		// 		event.preventDefault();
-		// 	});
-		// 	$('#processLottery').hide();
-		// }
-		// else 
+		if (latestblock < desiredblock)
+		{
+			var winnersPane = $('#winnersPane');
+			winnersPane.html("Sorry, the lottery results are not available yet. They will be available in about " + Math.ceil((desiredblock - latestblock) * 10) + " minutes.");
+			$('#processLottery').click(function(event){
+				event.preventDefault();
+			});
+			$('#processLottery').hide();
+		}
+		else 
 		{
 			$('#processLottery').click(function(event){
 				event.preventDefault();
