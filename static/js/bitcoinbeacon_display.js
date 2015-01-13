@@ -8,7 +8,7 @@ function processLottery()
 	// numParticipants = lotteryDetails.numParticipants;
 	// numWinners = lotteryDetails.numWinners;
 	// randomKey = manifestJSON.randomKey;
-	blockNumber = $('#futureBlockNum').html();
+	blockNumber = $('#futureBlockNum').html().trim();
 	// console.log(blockNumber);
 
 	// hack together a way to get the JSON object since Python is really annoying with how it displays things
@@ -248,7 +248,7 @@ function processLottery()
 							else 
 							{
 								var winnersPane = $('#winnersPane');
-								winnersPane.html("yoyoyo");
+								winnersPane.html("<b>" + tuples + "</b> ");
 							}
 						}
 						else {
