@@ -21,7 +21,10 @@ function manifestEntry()
 	manifestHashEntryField.css('color', 'gray');
 
 	manifestHashEntryField.focus(function(event) {
-		manifestHashEntryField.val("");
+		if(manifestHashEntryField.val() == defaultVal){
+			manifestHashEntryField.val("");
+			manifestHashEntryField.css('color', 'gray');
+		}
 		manifestHashEntryField.css('color', 'black');
 	});
 	manifestHashEntryField.blur(function(event) {
@@ -69,6 +72,7 @@ $(document).ready(function()
 	$('#manifestEntry').hide().children().hide();
 	$('#createNewButton').click(redirectToCreateNew);
 	$('#processManifestButton').click(manifestEntry);
+	$('#manifestHashEntryButton').click(redirectToManifest);
 
 	if (window.File && window.FileReader && window.FileList && window.Blob) {}
 	else {
