@@ -8,8 +8,6 @@ h1 {
 	color: #3399ff;
 }
 
-#
-
 table {
 	margin-top: 50px;
 	border-collapse: collapse;
@@ -39,7 +37,7 @@ tr:nth-child(odd) {
 	font-weight: normal;
 }
 
-#processLottery {
+#processLottery, #downloadFile {
 /*	background-color: #3399ff;
 	border-color: #3399ff;
 	color: white;*/
@@ -60,7 +58,7 @@ tr:nth-child(odd) {
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
-#processLottery:hover {
+#processLottery:hover , #downloadFile:hover {
     /*-webkit-transition: background linear 0.1s;*/
     -webkit-transition: border .1s linear, color .1s linear, background-color .1s linear;
     transition: border .1s linear, color .1s linear, background-color .1s linear;

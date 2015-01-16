@@ -299,6 +299,11 @@ $(document).ready(function()
 	});
 	$('#processLottery').hide();
 
+	$('#downloadFile').click(function(event){
+		event.preventDefault();
+		window.location.href = "/download/" + $('#hashOutputString').html().trim();
+	})
+
 	var futureBlockNum = parseInt($('#futureBlockNum').html());
 	console.log("futureBlockNum: " + futureBlockNum);
 

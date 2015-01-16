@@ -12,8 +12,9 @@ function manifestEntry()
 {
 	var manifestHashEntryField = $('#manifestHashEntryField');
 	var manifestHashEntryButton = $('#manifestHashEntryButton');
-	manifestHashEntryField.show();
-	manifestHashEntryButton.show();
+	// manifestHashEntryField.show();
+	// manifestHashEntryButton.show();
+	$('#manifestEntry').show().children().show();
 
 	var defaultVal = "Enter the hash here";
 	manifestHashEntryField.val(defaultVal);
@@ -36,12 +37,53 @@ function redirectToManifest()
 	window.location.href = '/manifest/' + $('#manifestHashEntryField').val();
 }
 
+var file = $('#manifestUploadFile')[0];
+
+function handleFileSelect(evt)
+{
+	file = evt.target.files[0];
+	console.log(file);
+}
+
+function readFile()
+{
+	// console.log(file);
+	// console.log('Reading file');
+	// alert('I\'m here!');
+	var reader = new FileReader();
+	var manifestJSON;
+	reader.onload = function()
+	{
+		// get the JSON fields
+		manifestJSON = JSON.parse(reader.result);
+		console.log(manifestJSON);
+		window.location.href = "/manifest/" + manifestJSON['hashOutputString'];
+	}
+	reader.readAsText(file);
+}
+
 $(document).ready(function()
 {
-	$('#manifestHashEntryField').css('display', 'none');
-	$('#manifestHashEntryButton').css('display', 'none').click(redirectToManifest);
+	// $('#manifestHashEntryField').css('display', 'none');
+	// $('#manifestHashEntryButton').css('display', 'none').click(redirectToManifest);
+	$('#manifestEntry').hide().children().hide();
 	$('#createNewButton').click(redirectToCreateNew);
 	$('#processManifestButton').click(manifestEntry);
+
+	if (window.File && window.FileReader && window.FileList && window.Blob) {}
+	else {
+		alert("File APIs not supported on this browser");
+		return;
+	}
+
+	$('#manifestUploadFile').change(handleFileSelect);
+	$('#submitManifestButton').click((function(file)
+	{
+		return function()
+		{
+			readFile(file);
+		};
+	}) (file) );
 
 	// console.log(jStat.exponential.cdf(10, 1/10));
 	// console.log(jStat.gamma.inv(.99, 1, 10));

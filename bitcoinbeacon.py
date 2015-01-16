@@ -67,11 +67,23 @@ class DisplayManifest(webapp2.RequestHandler):
 		template = JINJA_ENVIRONMENT.get_template('display_manifest.html')
 		self.response.write(template.render(template_values))
 
+class DownloadManifest(webapp2.RequestHandler):
+	def get(self):
+		manifest_id = self.request.path.split("/")[-1]
+		logging.info(manifest_id)
+		manifest = Manifest.get_by_id(manifest_id)
+		logging.info(manifest.manifest_details)
+		self.response.headers['Content-Type'] = 'text/json'
+		self.response.headers['Content-Disposition'] = 'attachment; filename=manifest_%s.json' % manifest_id
+		self.response.write(json.dumps(manifest.manifest_details))
+		# template = JINJA_ENVIRONMENT.get_template('index.html')
+		# self.response.write(template.render())\
+
 class ProcessManifest(webapp2.RequestHandler):
 	def get(self):
 		template = JINJA_ENVIRONMENT.get_template('process_manifest.html')
 		self.response.out.write(template.render())	
 
 application = webapp2.WSGIApplication([
-    ('/', MainPage), ('/createnew', CreateNew), ('/processmanifest', ProcessManifest), ('/created', SaveManifest), ('/manifest/\w*', DisplayManifest)
+    ('/', MainPage), ('/createnew', CreateNew), ('/processmanifest', ProcessManifest), ('/created', SaveManifest), ('/manifest/\w*', DisplayManifest), ('/download/\w*', DownloadManifest)
 ], debug=True)
