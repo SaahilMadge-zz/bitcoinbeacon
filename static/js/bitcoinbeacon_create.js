@@ -656,7 +656,7 @@ function getFutureBlockNum(resultsDateVal, resultsTimeVal)
 			})
 		}).fail(function(retargetTextStatus, error)
 		{
-			console.log("Error: " + textStatus + " " + error);
+			console.log("Error: " + retargetTextStatus + " " + error);
 		});
 
 	}).fail(function(textStatus, error)
